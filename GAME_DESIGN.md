@@ -81,7 +81,17 @@ Each hall has its own lore, a banner and a centerpiece where you can read about 
 
 ## 4. Classes (5)
 
-Every class has: a **passive**, **Ability 1 (Q)**, **Ability 2 / movement (E)**, a **Super (F)** that charges from kills, damage and time, base stats and a starting weapon.
+Every class has: a **passive**, **Ability 1 (Q)**, **Ability 2 / movement (E)**, a **grenade (G)**, a **melee (V)**, a **Super (F)** that charges from kills, damage and time, an **element**, base stats and a starting weapon.
+
+| | Element | Grenade (G) | Melee (V) |
+|---|---|---|---|
+| Bulwark | Ember | Frag: big impact blast | Shoulder Charge |
+| Phantom | Volt | Arcbolt: chains to 4 enemies | Knife Throw (45 studs) |
+| Arcanist | Null | Vortex: 4s damage zone | Void Palm (cone knockback) |
+| Lifebinder | Ember | Healing: heals allies, burns enemies | Siphon Strike (heals you) |
+| Engineer | Volt | Cluster: 1 + 4 blasts | Shock Wrench (stuns) |
+
+**Finishers:** V on a non-boss enemy at ≤15% health right in front of you kills it in style, makes you briefly untouchable and drops power orbs (super energy) for nearby allies.
 
 | | **Bulwark** | **Phantom** | **Arcanist** | **Lifebinder** | **Engineer** |
 |---|---|---|---|---|---|
@@ -135,8 +145,21 @@ Two layers, like the game that inspired it:
 - Your power vs. the mission's power changes your damage (±2% per point, between 50% and 130%). Being underpowered hurts, so players have a reason to grind.
 
 ### Weapons
-Auto Rifle, Hand Cannon, Scout Rifle, Shotgun, SMG, Sniper. Each has damage, fire rate, magazine, reload time, range, spread and headshot multiplier.
-**Rarity (Phase 2):** Common → Rare → Legendary → Exotic. Legendaries get 1–2 random perks. Exotics have unique effects and are the chase items.
+Three slots:
+- **Primary / secondary:** Auto Rifle, Hand Cannon, Scout Rifle, SMG (primary ammo, infinite reserve), Shotgun and Sniper (special ammo).
+- **Heavy:** Rocket Launcher, Machine Gun (heavy ammo).
+
+Each weapon has damage, fire rate, magazine, reload time, range, spread, headshot multiplier, an ADS zoom and recoil.
+
+**Ammo economy:** special and heavy reserves are limited, refilled at mission start and topped up by **ammo bricks** dropped by enemies (green = special, purple = heavy). Bosses always drop heavy.
+
+**Rarity:** Common → Rare (1 perk) → Legendary (2 perks) → Exotic (unique perk). **Elements:** Rare weapons are 50% elemental, and Legendary and Exotic weapons always are.
+
+### Combat systems
+- **Aim down sights** (zoom, tighter spread, slower walk), **sprint**, **slide** and **mantle**.
+- **Elemental shields** on elites and bosses: the matching element deals 3× to the shield, anything else 0.5×. Breaking a shield causes an area burst.
+- **Boss weak points:** a glowing core is exposed every ~10–12s for ~5s, and hits on it deal 3–3.5×.
+- **Aim assist** on gamepad and touch (never for mouse), with optional **mobile auto-fire**.
 
 ### Currency
 - **Shards**: earned by playing. Spent on gear upgrades and cosmetics from the ship vendor.
