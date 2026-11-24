@@ -60,7 +60,7 @@ function Pages.Classes(state)
 	for _, id in Classes.Order do
 		local class = Classes.Defs[id]
 		local selected = state and state.classId == id
-		local c = card(150)
+		local c = card(190)
 		c.UIStroke.Color = class.color
 		c.UIStroke.Transparency = if selected then 0 else 0.5
 		UI.label({
@@ -80,6 +80,8 @@ function Pages.Classes(state)
 			("Passive — %s: %s"):format(class.passive.name, class.passive.description),
 			("Q — %s: %s"):format(class.abilities.Q.name, class.abilities.Q.description),
 			("E — %s: %s"):format(class.abilities.E.name, class.abilities.E.description),
+			("G — %s: %s"):format(class.abilities.G.name, class.abilities.G.description),
+			("V — %s: %s"):format(class.abilities.V.name, class.abilities.V.description),
 			("F (Super) — %s: %s"):format(class.abilities.F.name, class.abilities.F.description),
 			("Weapons — %s + %s"):format(
 				Weapons[class.startingWeapons.primary].name,
@@ -411,9 +413,9 @@ function Pages.ClassHall(state, classId: string?)
 		end)
 	end
 
-	local a = card(110)
+	local a = card(150)
 	UI.label({ Text = "ABILITIES", Size = UDim2.new(1, 0, 0, 18), TextColor3 = C.accent, Parent = a })
-	for i, key in { "Q", "E", "F" } do
+	for i, key in { "Q", "E", "G", "V", "F" } do
 		local def = class.abilities[key]
 		UI.label({
 			Text = ("%s — %s: %s"):format(if key == "F" then "Super" else key, def.name, def.description),

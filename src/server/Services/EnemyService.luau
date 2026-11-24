@@ -542,6 +542,10 @@ local function think(brain: Brain, dt: number)
 		checkPhases(brain)
 	end
 	local pos = brain.root.Position
+	if (tonumber(brain.model:GetAttribute("StunnedUntil")) or 0) > workspace:GetServerTimeNow() then
+		brain.hum:MoveTo(pos) -- stunned: no movement, no attacks
+		return
+	end
 	local target, targetRoot = nearestTarget(pos, brain.def.aggroRange)
 	if not target or not targetRoot then
 		brain.hum:MoveTo(pos)

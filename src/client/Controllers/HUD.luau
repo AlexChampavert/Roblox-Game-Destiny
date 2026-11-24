@@ -1,5 +1,6 @@
 -- In-game HUD: health, ammo, abilities, super, level/XP, objective, notifications.
 
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -206,6 +207,21 @@ local function build()
 	refs.Q = abilityBox(gui, "Q", -80)
 	refs.F = abilityBox(gui, "F", 0)
 	refs.E = abilityBox(gui, "E", 80)
+	refs.G = abilityBox(gui, "G", -150)
+	refs.V = abilityBox(gui, "V", 150)
+
+	-- Finisher prompt
+	refs.finisher = UI.label({
+		Text = "FINISH  [V]",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0.56, 0),
+		Size = UDim2.fromOffset(200, 30),
+		TextXAlignment = Enum.TextXAlignment.Center,
+		TextColor3 = C.gold,
+		TextStrokeTransparency = 0.3,
+		Visible = false,
+		Parent = gui,
+	})
 
 	-- Notification feed (right side)
 	feed = UI.new("Frame", {
@@ -384,6 +400,30 @@ local function update()
 		then "RELOADING"
 		else ("%d / %d"):format(player:GetAttribute("Ammo") or 0, player:GetAttribute("MagSize") or 0)
 
+	-- Finisher available? (weakened non-boss enemy right in front)
+	refs.finisher.Visible = false
+	local root = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if root and workspace:GetAttribute("Mode") == "Mission" then
+		for _, enemy in CollectionService:GetTagged("Enemy") do
+			local eh = enemy:FindFirstChildOfClass("Humanoid")
+			local ep = enemy.PrimaryPart
+			if
+				eh
+				and ep
+				and eh.Health > 0
+				and not enemy:GetAttribute("IsBoss")
+				and eh.Health / eh.MaxHealth <= 0.15
+			then
+				local to = ep.Position - root.Position
+				local flat = Vector3.new(to.X, 0, to.Z)
+				if flat.Magnitude <= 8 and (flat.Magnitude < 2 or flat.Unit:Dot(root.CFrame.LookVector) >= 0.5) then
+					refs.finisher.Visible = true
+					break
+				end
+			end
+		end
+	end
+
 	-- Downed
 	local downedUntil = char and char:GetAttribute("Downed") and char:GetAttribute("DownedUntil")
 	refs.downed.Visible = downedUntil ~= nil
@@ -405,7 +445,7 @@ local function update()
 	local class = classId and Classes.Defs[classId]
 	refs.className.Text = if class then class.name .. "  ·  " .. class.role else "No class — open the Class Terminal"
 	local now = workspace:GetServerTimeNow()
-	for _, key in { "Q", "E" } do
+	for _, key in { "Q", "E", "G", "V" } do
 		local box = refs[key]
 		box.box.Visible = class ~= nil
 		if class then

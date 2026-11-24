@@ -1,8 +1,8 @@
--- Class abilities (Q, E) and supers (F). Server validates cooldowns/charge and applies effects.
+-- Class abilities (Q, E), grenades (G, see Grenades.luau), melee + finishers (V, see Melee.luau)
+-- and supers (F). Server validates cooldowns/charge and applies effects.
 -- Movement (dashes, thrusters) is applied on the owning client via an "Impulse" effect
 -- because the client owns its character's physics; the server still decides if it happens.
 
-local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Debris = game:GetService("Debris")
@@ -16,87 +16,13 @@ local Security = require(script.Parent.Security)
 
 local AbilityService = {}
 
-type Ctx = {
-	player: Player,
-	char: Model,
-	hum: Humanoid,
-	root: BasePart,
-	aim: Vector3, -- world point the player is aiming at
-	look: Vector3, -- flat look direction
-}
+local Kit = require(script.Kit)
+type Ctx = Kit.Ctx
 
-local function now(): number
-	return workspace:GetServerTimeNow()
-end
-
-local function effect(kind: string, data: any)
-	Net.event("Effect"):FireAllClients(kind, data)
-end
-
-local function impulse(player: Player, velocity: Vector3, duration: number)
-	Net.event("Effect"):FireClient(player, "Impulse", { velocity = velocity, duration = duration })
-end
-
-local function enemiesInRadius(pos: Vector3, radius: number): { Model }
-	local list = {}
-	for _, model in CollectionService:GetTagged("Enemy") do
-		local hum = model:FindFirstChildOfClass("Humanoid")
-		if hum and hum.Health > 0 and model.PrimaryPart then
-			if (model.PrimaryPart.Position - pos).Magnitude <= radius then
-				table.insert(list, model)
-			end
-		end
-	end
-	return list
-end
+local now, effect, impulse = Kit.now, Kit.effect, Kit.impulse
+local enemiesInRadius, alliesInRadius = Kit.enemiesInRadius, Kit.alliesInRadius
+local zonePart, clampAim = Kit.zonePart, Kit.clampAim
 AbilityService.EnemiesInRadius = enemiesInRadius
-
-local function alliesInRadius(pos: Vector3, radius: number): { Player }
-	local list = {}
-	for _, p in Players:GetPlayers() do
-		local _, _, root = CombatService.GetAlive(p)
-		if root and (root.Position - pos).Magnitude <= radius then
-			table.insert(list, p)
-		end
-	end
-	return list
-end
-
-local function zonePart(
-	name: string,
-	pos: Vector3,
-	size: Vector3,
-	color: Color3,
-	shape: Enum.PartType,
-	transparency: number
-): Part
-	local p = Instance.new("Part")
-	p.Name = name
-	p.Shape = shape
-	p.Size = size
-	p.Position = pos
-	p.Anchored = true
-	p.CanCollide = false
-	p.CanQuery = false
-	p.CanTouch = false
-	p.Material = Enum.Material.ForceField
-	p.Color = color
-	p.Transparency = transparency
-	p.CastShadow = false
-	p.Parent = CombatService.EffectsFolder
-	return p
-end
-
-local function clampAim(ctx: Ctx, maxDistance: number): Vector3
-	local offset = ctx.aim - ctx.root.Position
-	if offset.Magnitude > maxDistance then
-		return ctx.root.Position + offset.Unit * maxDistance
-	end
-	return ctx.aim
-end
-
--- ===== Ability implementations =====
--- Return false to cancel (cooldown is not consumed).
 
 local Abilities: { [string]: (Ctx) -> boolean } = {}
 
@@ -407,10 +333,23 @@ end
 
 -- ===== Dispatch =====
 
+-- Grenades and melee live in their own modules
+local Melee = require(script.Melee)
+for id, fn in require(script.Grenades) do
+	Abilities[id] = fn
+end
+for id, fn in Melee do
+	if type(fn) == "function" and id ~= "FinisherTarget" and id ~= "Finisher" then
+		Abilities[id] = fn
+	end
+end
+
+local VALID_SLOTS = { Q = true, E = true, F = true, G = true, V = true }
+
 local MOVEMENT_ABILITIES = { Charge = true, ShadowDash = true, Blink = true, Lifeline = false, Thrusters = true }
 
 local function onUseAbility(player: Player, slot: any, aim: any)
-	if (slot ~= "Q" and slot ~= "E" and slot ~= "F") or typeof(aim) ~= "Vector3" then
+	if type(slot) ~= "string" or not VALID_SLOTS[slot] or typeof(aim) ~= "Vector3" or aim.X ~= aim.X then
 		return
 	end
 	local classId = player:GetAttribute("ClassId")
@@ -420,6 +359,9 @@ local function onUseAbility(player: Player, slot: any, aim: any)
 		return
 	end
 	local def = class.abilities[slot]
+	if not def then
+		return
+	end
 	local inMission = CombatService.IsCombatEnabled()
 	-- In the hub only movement abilities work (fun on the Skydeck jumping puzzle)
 	if not inMission and not MOVEMENT_ABILITIES[def.id] then
@@ -437,13 +379,25 @@ local function onUseAbility(player: Player, slot: any, aim: any)
 
 	local flat = Vector3.new(aim.X - root.Position.X, 0, aim.Z - root.Position.Z)
 	local look = if flat.Magnitude > 0.1 then flat.Unit else root.CFrame.LookVector
+	local ctx: Ctx =
+		{ player = player, char = char, hum = hum, root = root, aim = aim, look = look, element = class.element }
+
+	-- V on a weakened enemy in front = finisher (doesn't use the melee cooldown)
+	if slot == "V" then
+		local target = Melee.FinisherTarget(ctx)
+		if target then
+			Melee.Finisher(ctx, target, class.color)
+			return
+		end
+	end
+
 	local fn = Abilities[def.id]
 	if not fn then
 		warn("[AbilityService] missing ability", def.id)
 		return
 	end
 	Security.AllowMovement(player, 2) -- dashes / boosts move faster than walking
-	local ok, used = pcall(fn, { player = player, char = char, hum = hum, root = root, aim = aim, look = look })
+	local ok, used = pcall(fn, ctx)
 	if not ok then
 		warn("[AbilityService]", def.id, "error:", used)
 		return
