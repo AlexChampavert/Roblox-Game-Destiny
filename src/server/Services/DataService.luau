@@ -140,6 +140,7 @@ local function load(player: Player)
 	local profile = nil
 	local failed = false
 	if store then
+		local errors = 0
 		for attempt = 1, LOAD_ATTEMPTS do
 			local steal = attempt == LOAD_ATTEMPTS
 			local lockedOut = false
@@ -161,7 +162,11 @@ local function load(player: Player)
 			end
 			failed = not ok
 			if not ok then
+				errors += 1
 				warn(("[DataService] load attempt %d failed for %s: %s"):format(attempt, player.Name, tostring(result)))
+				if errors >= 3 then
+					break -- DataStore is down (or Studio has no API access): don't keep the player waiting
+				end
 			end
 			task.wait(1.5)
 			if not player.Parent then
