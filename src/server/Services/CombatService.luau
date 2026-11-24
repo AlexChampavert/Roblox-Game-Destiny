@@ -314,7 +314,13 @@ end
 
 -- headshot ~= nil means the damage came from a weapon; nil = ability/turret
 -- element: "Ember" | "Volt" | "Null" | nil (kinetic)
-function CombatService.DamageEnemy(model: Model, amount: number, attacker: Player?, headshot: boolean?, element: string?)
+function CombatService.DamageEnemy(
+	model: Model,
+	amount: number,
+	attacker: Player?,
+	headshot: boolean?,
+	element: string?
+)
 	local hum = model:FindFirstChildOfClass("Humanoid")
 	if not hum or hum.Health <= 0 then
 		return

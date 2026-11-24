@@ -379,7 +379,8 @@ local function onUseAbility(player: Player, slot: any, aim: any)
 
 	local flat = Vector3.new(aim.X - root.Position.X, 0, aim.Z - root.Position.Z)
 	local look = if flat.Magnitude > 0.1 then flat.Unit else root.CFrame.LookVector
-	local ctx: Ctx = { player = player, char = char, hum = hum, root = root, aim = aim, look = look, element = class.element }
+	local ctx: Ctx =
+		{ player = player, char = char, hum = hum, root = root, aim = aim, look = look, element = class.element }
 
 	-- V on a weakened enemy in front = finisher (doesn't use the melee cooldown)
 	if slot == "V" then
