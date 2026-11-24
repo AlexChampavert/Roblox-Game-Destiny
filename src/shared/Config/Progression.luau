@@ -22,7 +22,20 @@ Progression.NormalDropBonus = { 0, 2 }
 Progression.PinnacleDropBonus = { 3, 5 }
 Progression.DropChancePerKill = 0.04 -- chance an enemy kill drops gear (non-boss)
 
-Progression.GearSlots = { "primary", "secondary", "armor" }
+Progression.GearSlots = { "primary", "secondary", "heavy", "armor" }
+Progression.WeaponSlots = { "primary", "secondary", "heavy" }
+
+-- Ammo economy: primary ammo is infinite; special (shotgun, sniper) and heavy are limited.
+-- Reserves are in magazines, refilled at mission start, topped up by ammo bricks from enemies.
+Progression.StartReserveMags = { special = 3, heavy = 2 }
+Progression.MaxReserveMags = { special = 6, heavy = 4 }
+Progression.AmmoDrops = {
+	special = 0.12, -- chance per normal kill
+	heavy = 0.04,
+	eliteSpecial = 0.45, -- elites (xp >= 30)
+	eliteHeavy = 0.15,
+	bossHeavy = 2, -- bricks guaranteed from a boss
+}
 
 -- Super charge (0-100)
 Progression.SuperChargePerKill = 4

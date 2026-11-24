@@ -67,11 +67,13 @@ end
 
 -- ===== Loot =====
 
-local weaponIds = {}
-for id in Weapons do
-	table.insert(weaponIds, id)
+-- Loot pools: normal weapons for primary/secondary, heavy weapons for the heavy slot
+local weaponIds, heavyIds = {}, {}
+for id, def in Weapons do
+	table.insert(if def.heavy then heavyIds else weaponIds, id)
 end
 table.sort(weaponIds)
+table.sort(heavyIds)
 
 local function rollRarity(pinnacle: boolean): string
 	local weights = if pinnacle then Loot.Weights.pinnacle else Loot.Weights.normal
@@ -140,7 +142,9 @@ function ProgressionService.GrantGear(player: Player, pinnacle: boolean, bonusPo
 	local item = {
 		uid = DataService.NewUid(profile),
 		slot = slot,
-		weaponId = if slot ~= "armor" then weaponIds[rng:NextInteger(1, #weaponIds)] else nil,
+		weaponId = if slot == "armor" then nil
+			elseif slot == "heavy" then heavyIds[rng:NextInteger(1, #heavyIds)]
+			else weaponIds[rng:NextInteger(1, #weaponIds)],
 		power = power,
 		rarity = rarity,
 		perks = if slot ~= "armor" then rollPerks(rarity) else {},

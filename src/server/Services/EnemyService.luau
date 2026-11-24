@@ -265,6 +265,7 @@ function EnemyService._onDied(model: Model)
 		end
 	end
 
+	CombatService.DropAmmo(model:GetPivot().Position, def)
 	died:Fire(model, def)
 
 	-- Fade out

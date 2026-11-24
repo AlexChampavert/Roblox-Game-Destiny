@@ -580,7 +580,7 @@ function Pages.Inventory(state)
 		TextColor3 = C.accent,
 		Parent = content,
 	})
-	for _, slot in { "primary", "secondary", "armor" } do
+	for _, slot in { "primary", "secondary", "heavy", "armor" } do
 		itemCard(state.gear[slot], true)
 	end
 	UI.label({

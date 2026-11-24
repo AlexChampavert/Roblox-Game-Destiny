@@ -16,6 +16,7 @@ local DataService = require(script.Parent.DataService)
 local ProgressionService = require(script.Parent.ProgressionService)
 local Security = require(script.Parent.Security)
 local MovementService = require(script.Parent.MovementService)
+local Ordnance = require(script.Parent.Ordnance)
 
 local CombatService = {}
 
@@ -24,7 +25,8 @@ local REGEN_PER_SECOND = 0.15 -- fraction of max health
 
 type WeaponState = {
 	slot: string,
-	ammo: { [string]: number },
+	ammo: { [string]: number }, -- rounds in the magazine, per slot
+	reserve: { [string]: number }, -- reserve rounds per ammo type ("special", "heavy"); primary is infinite
 	lastFire: number,
 	reloadingUntil: number,
 	reloadToken: number,
@@ -96,7 +98,7 @@ function CombatService.GetWeaponId(player: Player, slot: string): string
 			return class.startingWeapons[slot]
 		end
 	end
-	return if slot == "primary" then "AutoRifle" else "HandCannon"
+	return if slot == "primary" then "AutoRifle" elseif slot == "heavy" then "RocketLauncher" else "HandCannon"
 end
 
 local function hasPerk(player: Player, slot: string, perk: string): boolean
@@ -201,16 +203,21 @@ local function syncWeapon(player: Player)
 	player:SetAttribute("WeaponName", Weapons[weaponId].name)
 	player:SetAttribute("WeaponRarity", if item then item.rarity else "Common")
 	player:SetAttribute("Ammo", st.ammo[st.slot])
+	local ammoType = Weapons[weaponId].ammoType
+	player:SetAttribute("AmmoType", ammoType)
+	player:SetAttribute("Reserve", if ammoType == "primary" then -1 else (st.reserve[ammoType] or 0))
 	player:SetAttribute("MagSize", magSize(player, st.slot))
 	player:SetAttribute("Reloading", now() < st.reloadingUntil)
 end
 
-function CombatService.RefreshLoadout(player: Player)
+-- refillReserves: true at mission start (special/heavy reserves back to their starting amount)
+function CombatService.RefreshLoadout(player: Player, refillReserves: boolean?)
 	local st = states[player]
 	if not st then
 		st = {
 			slot = "primary",
 			ammo = {},
+			reserve = {},
 			lastFire = 0,
 			reloadingUntil = 0,
 			reloadToken = 0,
@@ -222,8 +229,12 @@ function CombatService.RefreshLoadout(player: Player)
 		}
 		states[player] = st
 	end
-	for _, slot in { "primary", "secondary" } do
+	for _, slot in Progression.WeaponSlots do
 		st.ammo[slot] = magSize(player, slot)
+		local ammoType = Weapons[CombatService.GetWeaponId(player, slot)].ammoType
+		if ammoType ~= "primary" and (refillReserves or st.reserve[ammoType] == nil) then
+			st.reserve[ammoType] = magSize(player, slot) * (Progression.StartReserveMags[ammoType] or 1)
+		end
 	end
 	st.reloadingUntil = 0
 	syncWeapon(player)
@@ -249,6 +260,11 @@ local function startReload(player: Player)
 	if st.ammo[st.slot] >= size then
 		return
 	end
+	local ammoType = Weapons[CombatService.GetWeaponId(player, st.slot)].ammoType
+	if ammoType ~= "primary" and (st.reserve[ammoType] or 0) <= 0 then
+		Net.event("Notify"):FireClient(player, ("No %s ammo: find ammo bricks!"):format(ammoType), "error")
+		return
+	end
 	st.reloadToken += 1
 	local token = st.reloadToken
 	local slot = st.slot
@@ -257,7 +273,14 @@ local function startReload(player: Player)
 	syncWeapon(player)
 	task.delay(duration, function()
 		if states[player] == st and st.reloadToken == token then
-			st.ammo[slot] = size
+			local needed = size - st.ammo[slot]
+			if ammoType == "primary" then
+				st.ammo[slot] = size
+			else
+				local take = math.min(needed, st.reserve[ammoType] or 0)
+				st.ammo[slot] += take
+				st.reserve[ammoType] = (st.reserve[ammoType] or 0) - take
+			end
 			st.reloadingUntil = 0
 			-- Kill Clip: reloading soon after a kill
 			if hasPerk(player, slot, "KillClip") and now() - st.killClipPending < 5 then
@@ -267,6 +290,54 @@ local function startReload(player: Player)
 			syncWeapon(player)
 		end
 	end)
+end
+
+-- Ammo bricks: +1 magazine of that ammo type (up to the max). Returns false if already full.
+function CombatService.AddReserve(player: Player, ammoType: string): boolean
+	local st = states[player]
+	if not st then
+		return false
+	end
+	local mag = 1
+	for _, slot in Progression.WeaponSlots do
+		if Weapons[CombatService.GetWeaponId(player, slot)].ammoType == ammoType then
+			mag = magSize(player, slot)
+		end
+	end
+	local max = mag * (Progression.MaxReserveMags[ammoType] or 4)
+	local current = st.reserve[ammoType] or 0
+	if current >= max then
+		return false
+	end
+	st.reserve[ammoType] = math.min(max, current + mag)
+	syncWeapon(player)
+	Net.event("Notify"):FireClient(player, ("+%s ammo"):format(if ammoType == "heavy" then "Heavy" else "Special"), "loot")
+	return true
+end
+
+-- Called by EnemyService when an enemy dies
+function CombatService.DropAmmo(position: Vector3, def)
+	local drops = Progression.AmmoDrops
+	local function brick(ammoType: string)
+		local offset = Vector3.new(rng:NextNumber(-2, 2), 0, rng:NextNumber(-2, 2))
+		Ordnance.SpawnAmmoBrick(position + offset, ammoType, function(p)
+			return CombatService.AddReserve(p, ammoType)
+		end)
+	end
+	if def.isBoss then
+		for _ = 1, drops.bossHeavy do
+			brick("heavy")
+		end
+		brick("special")
+		return
+	end
+	local elite = def.xp >= 30
+	if rng:NextNumber() < (if elite then drops.eliteSpecial else drops.special) then
+		brick("special")
+	end
+	if rng:NextNumber() < (if elite then drops.eliteHeavy else drops.heavy) then
+		brick("heavy")
+	end
 end
 
 -- Called by EnemyService when this player lands a killing blow
@@ -548,6 +619,27 @@ local function onFire(player: Player, aimPoint: any)
 	local muzzle = if muzzleAtt then muzzleAtt.WorldPosition else origin + baseDir * 2
 	local tracerColor = if empowered then Color3.fromRGB(200, 120, 255) else Color3.fromRGB(255, 230, 150)
 
+	local item = CombatService.GetWeaponItem(player, slot)
+	local element = item and item.element
+
+	if w.projectile then
+		-- Rocket: a real projectile that explodes on impact
+		local radius = w.projectile.radius
+		Ordnance.FireRocket(muzzle, baseDir, w.projectile.speed, params, function(at)
+			Net.event("Effect"):FireAllClients("Explosion", { position = at, radius = radius, color = Color3.fromRGB(255, 160, 60) })
+			for _, enemy in CollectionService:GetTagged("Enemy") do
+				local part = enemy.PrimaryPart
+				if part and (part.Position - at).Magnitude <= radius then
+					CombatService.DamageEnemy(enemy, w.damage * mult, player, false, element)
+				end
+			end
+		end)
+		if st.ammo[slot] <= 0 then
+			startReload(player)
+		end
+		return
+	end
+
 	for _ = 1, w.pellets do
 		local dir = spreadDirection(baseDir, w.spread * spreadMult)
 		local result = workspace:Raycast(origin, dir * w.range, params)
@@ -566,7 +658,7 @@ local function onFire(player: Player, aimPoint: any)
 				if empowered then
 					damage *= 5
 				end
-				CombatService.DamageEnemy(model, damage, player, headshot)
+				CombatService.DamageEnemy(model, damage, player, headshot, element)
 
 				if explosive then
 					for _, other in CollectionService:GetTagged("Enemy") do
@@ -575,7 +667,7 @@ local function onFire(player: Player, aimPoint: any)
 							and other.PrimaryPart
 							and (other.PrimaryPart.Position - hitPos).Magnitude < 6
 						then
-							CombatService.DamageEnemy(other, damage * 0.25, player, false)
+							CombatService.DamageEnemy(other, damage * 0.25, player, false, element)
 						end
 					end
 				end
@@ -635,7 +727,7 @@ function CombatService.Start()
 	end))
 	Net.event("SwitchWeapon").OnServerEvent:Connect(Security.Guard("SwitchWeapon", 4, function(player, slot)
 		local st = states[player]
-		if not st or (slot ~= "primary" and slot ~= "secondary") or st.slot == slot then
+		if not st or not table.find(Progression.WeaponSlots, slot) or st.slot == slot then
 			return
 		end
 		st.slot = slot
