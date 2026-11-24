@@ -17,11 +17,15 @@ export type WeaponDef = {
 	recoil: number, -- camera kick (degrees per shot)
 	adsFov: number, -- camera field of view while aiming down sights (hip = 70)
 	fireSound: string?, -- e.g. "rbxassetid://123" — set when you have audio
+	ammoType: string, -- "primary" (infinite reserve) | "special" | "heavy" (limited reserve)
+	heavy: boolean?, -- goes in the heavy slot (key 3)
+	projectile: { speed: number, radius: number }?, -- rockets: explode on impact
 }
 
 local Weapons: { [string]: WeaponDef } = {
 	AutoRifle = {
 		id = "AutoRifle",
+		ammoType = "primary",
 		name = "Auto Rifle",
 		damage = 9,
 		rpm = 600,
@@ -38,6 +42,7 @@ local Weapons: { [string]: WeaponDef } = {
 	},
 	HandCannon = {
 		id = "HandCannon",
+		ammoType = "primary",
 		name = "Hand Cannon",
 		damage = 32,
 		rpm = 140,
@@ -54,6 +59,7 @@ local Weapons: { [string]: WeaponDef } = {
 	},
 	ScoutRifle = {
 		id = "ScoutRifle",
+		ammoType = "primary",
 		name = "Scout Rifle",
 		damage = 24,
 		rpm = 260,
@@ -70,6 +76,7 @@ local Weapons: { [string]: WeaponDef } = {
 	},
 	SMG = {
 		id = "SMG",
+		ammoType = "primary",
 		name = "SMG",
 		damage = 6,
 		rpm = 900,
@@ -86,6 +93,7 @@ local Weapons: { [string]: WeaponDef } = {
 	},
 	Shotgun = {
 		id = "Shotgun",
+		ammoType = "special",
 		name = "Shotgun",
 		damage = 11,
 		rpm = 70,
@@ -102,6 +110,7 @@ local Weapons: { [string]: WeaponDef } = {
 	},
 	Sniper = {
 		id = "Sniper",
+		ammoType = "special",
 		name = "Sniper Rifle",
 		damage = 120,
 		rpm = 45,
@@ -115,6 +124,44 @@ local Weapons: { [string]: WeaponDef } = {
 		adsFov = 20,
 		recoil = 5.0,
 		automatic = false,
+	},
+	-- HEAVY (slot 3)
+	RocketLauncher = {
+		id = "RocketLauncher",
+		ammoType = "heavy",
+		heavy = true,
+		name = "Rocket Launcher",
+		damage = 280, -- explosion damage
+		rpm = 50,
+		magSize = 1,
+		reloadTime = 2.6,
+		range = 600,
+		spread = 0,
+		pellets = 1,
+		headshotMult = 1,
+		length = 4.4,
+		adsFov = 50,
+		recoil = 6,
+		automatic = false,
+		projectile = { speed = 150, radius = 13 },
+	},
+	MachineGun = {
+		id = "MachineGun",
+		ammoType = "heavy",
+		heavy = true,
+		name = "Machine Gun",
+		damage = 17,
+		rpm = 450,
+		magSize = 60,
+		reloadTime = 3.4,
+		range = 260,
+		spread = 2.2,
+		pellets = 1,
+		headshotMult = 1.5,
+		length = 4.6,
+		adsFov = 55,
+		recoil = 0.9,
+		automatic = true,
 	},
 }
 

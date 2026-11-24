@@ -59,6 +59,7 @@ local function defaultProfile()
 		gear = { -- equipped items (weaponId nil = class starting weapon)
 			primary = starterItem("primary"),
 			secondary = starterItem("secondary"),
+			heavy = starterItem("heavy"),
 			armor = starterItem("armor"),
 		},
 		inventory = {}, -- unequipped items (see Loot.InventoryCap)
@@ -94,7 +95,14 @@ end
 
 function DataService.GetPower(profile): number
 	local g = profile.gear
-	return math.floor((g.primary.power + g.secondary.power + g.armor.power) / 3)
+	local total, count = 0, 0
+	for _, slot in Progression.GearSlots do
+		if g[slot] then
+			total += g[slot].power
+			count += 1
+		end
+	end
+	return math.floor(total / math.max(count, 1))
 end
 
 function DataService.GetOrderRank(profile, classId: string?): number

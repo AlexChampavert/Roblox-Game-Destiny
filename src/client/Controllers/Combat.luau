@@ -163,7 +163,8 @@ end
 
 local function swapWeapon(slot: string?)
 	local current = player:GetAttribute("WeaponSlot") or "primary"
-	local target = slot or (if current == "primary" then "secondary" else "primary")
+	local cycle = { primary = "secondary", secondary = "heavy", heavy = "primary" }
+	local target = slot or cycle[current] or "primary"
 	Net.event("SwitchWeapon"):FireServer(target)
 end
 
@@ -197,6 +198,9 @@ local KEY_ACTIONS: { [Enum.KeyCode]: () -> () } = {
 	end,
 	[Enum.KeyCode.Two] = function()
 		swapWeapon("secondary")
+	end,
+	[Enum.KeyCode.Three] = function()
+		swapWeapon("heavy")
 	end,
 	[Enum.KeyCode.Tab] = function()
 		if Menus then
@@ -487,6 +491,12 @@ function Combat.PredictShot(w, aim: Vector3)
 	local gun = char:FindFirstChild("Gun") :: Model?
 	local muzzleAtt = gun and gun.PrimaryPart and gun.PrimaryPart:FindFirstChild("Muzzle") :: Attachment?
 	local muzzle = if muzzleAtt then muzzleAtt.WorldPosition else head.Position
+	if w.projectile then
+		-- Rockets are real server projectiles: only flash and kick locally
+		Effects.MuzzleFlash(muzzle, Color3.fromRGB(255, 160, 60))
+		recoilKick = math.min(recoilKick + w.recoil, 12)
+		return
+	end
 	local params = getRayParams()
 	local baseDir = (aim - head.Position).Unit
 	local anyHit, anyHead = false, false

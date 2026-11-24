@@ -399,6 +399,15 @@ local function update()
 	refs.ammo.Text = if reloading
 		then "RELOADING"
 		else ("%d / %d"):format(player:GetAttribute("Ammo") or 0, player:GetAttribute("MagSize") or 0)
+	local reserve = player:GetAttribute("Reserve") or -1
+	if reserve >= 0 and not reloading then
+		refs.ammo.Text ..= ("  ·  %d"):format(reserve)
+	end
+	local ammoType = player:GetAttribute("AmmoType")
+	refs.ammo.TextColor3 = if ammoType == "heavy"
+		then Color3.fromRGB(190, 90, 255)
+		elseif ammoType == "special" then Color3.fromRGB(90, 255, 120)
+		else C.text
 
 	-- Finisher available? (weakened non-boss enemy right in front)
 	refs.finisher.Visible = false

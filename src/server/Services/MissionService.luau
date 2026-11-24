@@ -17,6 +17,7 @@ local CombatService = require(script.Parent.CombatService)
 local EnemyService = require(script.Parent.EnemyService)
 local ProgressionService = require(script.Parent.ProgressionService)
 local StoryService = require(script.Parent.StoryService)
+local Ordnance = require(script.Parent.Ordnance)
 local BountyService = require(script.Parent.BountyService)
 local Security = require(script.Parent.Security)
 local Telemetry = require(script.Parent.Telemetry)
@@ -391,6 +392,7 @@ function MissionService.ReturnToHub()
 	if RunService:IsStudio() or not workspace:GetAttribute("ReservedServer") then
 		-- Studio test: tear down and move everyone back to the hub
 		EnemyService.ClearAll()
+		Ordnance.Clear()
 		if a then
 			MissionBuilder.Clear(a.layout)
 		end
@@ -455,7 +457,7 @@ function MissionService.Start(missionId: string)
 	for _, p in Players:GetPlayers() do
 		Telemetry.Step(p, Telemetry.Funnel.FirstLaunch)
 		p:SetAttribute("SuperCharge", 0)
-		CombatService.RefreshLoadout(p)
+		CombatService.RefreshLoadout(p, true) -- fresh special/heavy reserves
 		placeAtCheckpoint(p)
 	end
 	notifyAll(def.intro, "story")
