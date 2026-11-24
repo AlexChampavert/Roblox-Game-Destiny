@@ -5,6 +5,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   lint:
     name: Lint, typecheck and build
@@ -46,15 +49,16 @@ jobs:
       - name: StyLua (format check)
         id: stylua
         continue-on-error: true
-        run: |
-          stylua --check src || (stylua src && git diff > stylua.patch && exit 1)
+        run: stylua --check src
 
-      - name: Upload format patch
-        if: steps.stylua.outcome == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: stylua-patch
-          path: stylua.patch
+      # On feature branches, fix formatting automatically and push it back
+      - name: Auto-format (feature branches only)
+        if: steps.stylua.outcome == 'failure' && github.event_name == 'push' && github.ref != 'refs/heads/main'
+        run: |
+          stylua src
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Format with StyLua" && git push
 
       - name: Result
         run: |
@@ -62,4 +66,5 @@ jobs:
           test "${{ steps.rojo.outcome }}" = "success"
           test "${{ steps.selene.outcome }}" = "success"
           test "${{ steps.luau.outcome }}" = "success"
-          test "${{ steps.stylua.outcome }}" = "success"
+          # Formatting is auto-fixed on feature branches; it only fails the build on main / PRs
+          if [ "${{ github.event_name }}" != "push" ] || [ "${{ github.ref }}" = "refs/heads/main" ]; then test "${{ steps.stylua.outcome }}" = "success"; fi

@@ -25,12 +25,17 @@ export type EnemyDef = {
 	size: number, -- scale of placeholder body
 	color: Color3,
 	isBoss: boolean?,
-	phases: { any }?, -- list of BossPhase (typed loosely: Luau can't infer mixed literal shapes)
+	phases: { BossPhase }?,
 	-- Ranged enemies with a projectile fire dodgeable shots instead of instant hits
 	projectile: { speed: number, size: number }?,
 	-- Telegraphed special attack: a warning circle appears under the target, then explodes
 	special: { every: number, radius: number, damage: number, windup: number }?,
 }
+
+-- Typed helper so each phase literal is checked on its own (Luau can't unify mixed literal shapes in an array)
+local function P(phase: BossPhase): BossPhase
+	return phase
+end
 
 local Enemies: { [string]: EnemyDef } = {
 	-- THE HOLLOW
@@ -89,7 +94,7 @@ local Enemies: { [string]: EnemyDef } = {
 		attackRange = 10, attackCooldown = 1.6, aggroRange = 250, xp = 300,
 		size = 3, color = Color3.fromRGB(130, 30, 30),
 		phases = {
-			{ atHealthPct = 0.5, spawnAdds = { Husk = 6 }, speedMult = 1.3, message = "Gravemaw calls the swarm!" },
+			P({ atHealthPct = 0.5, spawnAdds = { Husk = 6 }, speedMult = 1.3, message = "Gravemaw calls the swarm!" }),
 		},
 	},
 	RelayWarden = {
@@ -99,8 +104,8 @@ local Enemies: { [string]: EnemyDef } = {
 		attackRange = 160, attackCooldown = 0.9, aggroRange = 250, xp = 400,
 		size = 3.2, color = Color3.fromRGB(90, 160, 200),
 		phases = {
-			{ atHealthPct = 0.6, spawnAdds = { Spitter = 4 }, message = "Relay Warden reroutes power to its cannons!" , damageMult = 1.3 },
-			{ atHealthPct = 0.25, spawnAdds = { Husk = 6 }, speedMult = 1.4, message = "Warning: core overload!" },
+			P({ atHealthPct = 0.6, spawnAdds = { Spitter = 4 }, message = "Relay Warden reroutes power to its cannons!" , damageMult = 1.3 }),
+			P({ atHealthPct = 0.25, spawnAdds = { Husk = 6 }, speedMult = 1.4, message = "Warning: core overload!" }),
 		},
 	},
 	Matriarch = {
@@ -111,8 +116,8 @@ local Enemies: { [string]: EnemyDef } = {
 		attackRange = 120, attackCooldown = 1.4, aggroRange = 250, xp = 500,
 		size = 3.5, color = Color3.fromRGB(180, 60, 220),
 		phases = {
-			{ atHealthPct = 0.66, spawnAdds = { Husk = 8 }, message = "The Matriarch births her brood!" },
-			{ atHealthPct = 0.33, spawnAdds = { Seer = 2, Spitter = 3 }, damageMult = 1.4, message = "The Matriarch screams!" },
+			P({ atHealthPct = 0.66, spawnAdds = { Husk = 8 }, message = "The Matriarch births her brood!" }),
+			P({ atHealthPct = 0.33, spawnAdds = { Seer = 2, Spitter = 3 }, damageMult = 1.4, message = "The Matriarch screams!" }),
 		},
 	},
 	VexRourke = {
@@ -122,9 +127,9 @@ local Enemies: { [string]: EnemyDef } = {
 		attackRange = 150, attackCooldown = 0.8, aggroRange = 260, xp = 600,
 		size = 2.4, color = Color3.fromRGB(170, 40, 40),
 		phases = {
-			{ atHealthPct = 0.7, spawnAdds = { Trooper = 5 }, message = "Rourke: \"Squad, cut them down!\"" },
-			{ atHealthPct = 0.4, spawnAdds = { Shieldbearer = 2, Marksman = 2 }, message = "Rourke: \"You don't get my ship!\"" },
-			{ atHealthPct = 0.15, speedMult = 1.5, damageMult = 1.5, message = "Rourke goes berserk!" },
+			P({ atHealthPct = 0.7, spawnAdds = { Trooper = 5 }, message = "Rourke: \"Squad, cut them down!\"" }),
+			P({ atHealthPct = 0.4, spawnAdds = { Shieldbearer = 2, Marksman = 2 }, message = "Rourke: \"You don't get my ship!\"" }),
+			P({ atHealthPct = 0.15, speedMult = 1.5, damageMult = 1.5, message = "Rourke goes berserk!" }),
 		},
 	},
 	Unmaker = {
@@ -135,9 +140,9 @@ local Enemies: { [string]: EnemyDef } = {
 		attackRange = 180, attackCooldown = 1.0, aggroRange = 300, xp = 1200,
 		size = 5, color = Color3.fromRGB(20, 10, 30),
 		phases = {
-			{ atHealthPct = 0.75, spawnAdds = { Husk = 10, Spitter = 4 }, message = "The Unmaker: \"YOU ARE ECHOES.\"" },
-			{ atHealthPct = 0.45, spawnAdds = { Brute = 2, Seer = 2 }, damageMult = 1.3, message = "The hive core cracks open!" },
-			{ atHealthPct = 0.15, speedMult = 1.6, damageMult = 1.6, message = "The Unmaker speaks with SOL's voice: \"...Warden?\"" },
+			P({ atHealthPct = 0.75, spawnAdds = { Husk = 10, Spitter = 4 }, message = "The Unmaker: \"YOU ARE ECHOES.\"" }),
+			P({ atHealthPct = 0.45, spawnAdds = { Brute = 2, Seer = 2 }, damageMult = 1.3, message = "The hive core cracks open!" }),
+			P({ atHealthPct = 0.15, speedMult = 1.6, damageMult = 1.6, message = "The Unmaker speaks with SOL's voice: \"...Warden?\"" }),
 		},
 	},
 }

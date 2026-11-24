@@ -16,7 +16,7 @@ export type Wave = { [string]: number } -- enemyId -> count
 export type Step = {
 	type: "Reach" | "Clear" | "Defend" | "Capture" | "Escort" | "Boss",
 	text: string,
-	waves: { any }?, -- list of Wave (typed loosely: Luau can't infer mixed literal shapes)
+	waves: { Wave }?,
 	duration: number?,
 	points: number?,
 	captureTime: number?,
@@ -54,6 +54,11 @@ export type MissionDef = {
 	steps: { Step },
 }
 
+-- Typed helper so each wave literal is checked as a map (Luau can't unify mixed literal shapes in an array)
+local function W(wave: Wave): Wave
+	return wave
+end
+
 local Missions: { [string]: MissionDef } = {
 	WakeProtocol = {
 		id = "WakeProtocol", order = 1,
@@ -72,8 +77,8 @@ local Missions: { [string]: MissionDef } = {
 		},
 		steps = {
 			{ type = "Reach", text = "Find the crashed shuttle" },
-			{ type = "Clear", text = "Clear the Hollow around the wreck", waves = { { Husk = 6 }, { Husk = 6, Spitter = 2 } } },
-			{ type = "Defend", text = "Defend the rescue beacon", duration = 45, waves = { { Husk = 5 }, { Husk = 4, Spitter = 3 }, { Brute = 1, Husk = 4 } } },
+			{ type = "Clear", text = "Clear the Hollow around the wreck", waves = { W({ Husk = 6 }), W({ Husk = 6, Spitter = 2 }) } },
+			{ type = "Defend", text = "Defend the rescue beacon", duration = 45, waves = { W({ Husk = 5 }), W({ Husk = 4, Spitter = 3 }), W({ Brute = 1, Husk = 4 }) } },
 			{ type = "Boss", text = "Kill Gravemaw, Brute Alpha", boss = "Gravemaw" },
 		},
 	},
@@ -95,8 +100,8 @@ local Missions: { [string]: MissionDef } = {
 		},
 		steps = {
 			{ type = "Reach", text = "Board Kepler Relay" },
-			{ type = "Capture", text = "Reactivate the 3 relay nodes", points = 3, captureTime = 8, waves = { { Husk = 5, Spitter = 2 }, { Spitter = 4, Husk = 3 } } },
-			{ type = "Clear", text = "Clear the station core", waves = { { Husk = 6, Spitter = 3 }, { Brute = 1, Seer = 1, Husk = 4 } } },
+			{ type = "Capture", text = "Reactivate the 3 relay nodes", points = 3, captureTime = 8, waves = { W({ Husk = 5, Spitter = 2 }), W({ Spitter = 4, Husk = 3 }) } },
+			{ type = "Clear", text = "Clear the station core", waves = { W({ Husk = 6, Spitter = 3 }), W({ Brute = 1, Seer = 1, Husk = 4 }) } },
 			{ type = "Boss", text = "Destroy the Relay Warden", boss = "RelayWarden" },
 		},
 	},
@@ -118,8 +123,8 @@ local Missions: { [string]: MissionDef } = {
 		},
 		steps = {
 			{ type = "Reach", text = "Descend into the Spire" },
-			{ type = "Escort", text = "Escort the data drone", waves = { { Husk = 6 }, { Spitter = 4, Husk = 4 }, { Brute = 1, Husk = 5 } } },
-			{ type = "Defend", text = "Defend the memory upload", duration = 60, waves = { { Husk = 6, Spitter = 2 }, { Seer = 1, Husk = 6 }, { Brute = 2, Spitter = 3 } } },
+			{ type = "Escort", text = "Escort the data drone", waves = { W({ Husk = 6 }), W({ Spitter = 4, Husk = 4 }), W({ Brute = 1, Husk = 5 }) } },
+			{ type = "Defend", text = "Defend the memory upload", duration = 60, waves = { W({ Husk = 6, Spitter = 2 }), W({ Seer = 1, Husk = 6 }), W({ Brute = 2, Spitter = 3 }) } },
 			{ type = "Boss", text = "Kill The Matriarch", boss = "Matriarch" },
 		},
 	},
@@ -140,9 +145,9 @@ local Missions: { [string]: MissionDef } = {
 			fogColor = Color3.fromRGB(220, 190, 140), fogEnd = 700, gravity = 196.2,
 		},
 		steps = {
-			{ type = "Clear", text = "Breach the outer wall", waves = { { Trooper = 6 }, { Trooper = 4, Marksman = 2 } } },
-			{ type = "Capture", text = "Seize the 2 cannon controls", points = 2, captureTime = 10, waves = { { Trooper = 5, Shieldbearer = 1 }, { Marksman = 2, Trooper = 4 } } },
-			{ type = "Clear", text = "Clear the courtyard", waves = { { Shieldbearer = 2, Trooper = 5 }, { Marksman = 3, Trooper = 5 } } },
+			{ type = "Clear", text = "Breach the outer wall", waves = { W({ Trooper = 6 }), W({ Trooper = 4, Marksman = 2 }) } },
+			{ type = "Capture", text = "Seize the 2 cannon controls", points = 2, captureTime = 10, waves = { W({ Trooper = 5, Shieldbearer = 1 }), W({ Marksman = 2, Trooper = 4 }) } },
+			{ type = "Clear", text = "Clear the courtyard", waves = { W({ Shieldbearer = 2, Trooper = 5 }), W({ Marksman = 3, Trooper = 5 }) } },
 			{ type = "Boss", text = "Defeat Commander Vex Rourke", boss = "VexRourke" },
 		},
 	},
@@ -163,8 +168,8 @@ local Missions: { [string]: MissionDef } = {
 			fogColor = Color3.fromRGB(40, 0, 50), fogEnd = 350, gravity = 196.2,
 		},
 		steps = {
-			{ type = "Clear", text = "Push into the hive", waves = { { Husk = 8, Spitter = 3 }, { Brute = 1, Husk = 6, Seer = 1 } } },
-			{ type = "Defend", text = "Hold the breach while the bomb arms", duration = 75, waves = { { Husk = 8 }, { Spitter = 4, Seer = 1, Husk = 4 }, { Brute = 2, Husk = 6 }, { Seer = 2, Spitter = 4 } } },
+			{ type = "Clear", text = "Push into the hive", waves = { W({ Husk = 8, Spitter = 3 }), W({ Brute = 1, Husk = 6, Seer = 1 }) } },
+			{ type = "Defend", text = "Hold the breach while the bomb arms", duration = 75, waves = { W({ Husk = 8 }), W({ Spitter = 4, Seer = 1, Husk = 4 }), W({ Brute = 2, Husk = 6 }), W({ Seer = 2, Spitter = 4 }) } },
 			{ type = "Boss", text = "Kill The Unmaker", boss = "Unmaker" },
 		},
 	},
