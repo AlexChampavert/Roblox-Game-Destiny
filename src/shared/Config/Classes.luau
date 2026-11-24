@@ -1,6 +1,7 @@
 --!strict
 -- Class definitions. Pure data: abilities are implemented in server/Services/AbilityService.
--- Keys: Q = ability 1, E = ability 2 (movement/utility), F = super.
+-- Keys: Q = ability 1, E = ability 2 (movement/utility), G = grenade, V = melee, F = super.
+-- element: the class's elemental damage type (see Config/Elements.luau)
 
 export type AbilityDef = {
 	id: string,
@@ -17,7 +18,8 @@ export type ClassDef = {
 	maxHealth: number,
 	walkSpeed: number,
 	passive: { id: string, name: string, description: string },
-	abilities: { Q: AbilityDef, E: AbilityDef, F: AbilityDef },
+	element: string,
+	abilities: { Q: AbilityDef, E: AbilityDef, F: AbilityDef, G: AbilityDef, V: AbilityDef },
 	startingWeapons: { primary: string, secondary: string },
 	hall: { name: string, lore: string, centerpiece: string }, -- class hall on the Meridian
 }
@@ -30,6 +32,7 @@ local Classes: { [string]: ClassDef } = {
 		color = Color3.fromRGB(230, 150, 60),
 		maxHealth = 150,
 		walkSpeed = 15,
+		element = "Ember",
 		passive = { id = "IronSkin", name = "Iron Skin", description = "Take 15% less damage." },
 		abilities = {
 			Q = {
@@ -50,6 +53,18 @@ local Classes: { [string]: ClassDef } = {
 				description = "Raise a dome. Allies inside take 60% less damage for 10s.",
 				cooldown = 0,
 			},
+			G = {
+				id = "FragGrenade",
+				name = "Frag Grenade",
+				description = "Explodes on impact for heavy area damage.",
+				cooldown = 12,
+			},
+			V = {
+				id = "ShoulderCharge",
+				name = "Shoulder Charge",
+				description = "Lunge forward and slam the first enemy you hit.",
+				cooldown = 6,
+			},
 		},
 		startingWeapons = { primary = "AutoRifle", secondary = "Shotgun" },
 		hall = {
@@ -66,6 +81,7 @@ local Classes: { [string]: ClassDef } = {
 		color = Color3.fromRGB(150, 110, 255),
 		maxHealth = 90,
 		walkSpeed = 20,
+		element = "Volt",
 		passive = { id = "Predator", name = "Predator", description = "+25% headshot damage." },
 		abilities = {
 			Q = {
@@ -92,6 +108,7 @@ local Classes: { [string]: ClassDef } = {
 		color = Color3.fromRGB(70, 200, 255),
 		maxHealth = 100,
 		walkSpeed = 16,
+		element = "Null",
 		passive = { id = "Overflow", name = "Overflow", description = "Ability cooldowns are 15% shorter." },
 		abilities = {
 			Q = {
@@ -100,12 +117,36 @@ local Classes: { [string]: ClassDef } = {
 				description = "A singularity that pulls in and damages enemies.",
 				cooldown = 12,
 			},
+			G = {
+				id = "ArcboltGrenade",
+				name = "Arcbolt Grenade",
+				description = "Lightning chains between up to 4 nearby enemies.",
+				cooldown = 12,
+			},
+			V = {
+				id = "KnifeThrow",
+				name = "Knife Throw",
+				description = "Throw a knife up to 45 studs. Headshots hurt.",
+				cooldown = 5,
+			},
 			E = { id = "Blink", name = "Blink", description = "Teleport 35 studs forward.", cooldown = 6 },
 			F = {
 				id = "NovaStorm",
 				name = "Nova Storm",
 				description = "Charge up, then detonate a massive explosion around you.",
 				cooldown = 0,
+			},
+			G = {
+				id = "VortexGrenade",
+				name = "Vortex Grenade",
+				description = "A swirling void that damages enemies inside for 4s.",
+				cooldown = 13,
+			},
+			V = {
+				id = "VoidPalm",
+				name = "Void Palm",
+				description = "Blast the enemies in front of you backwards.",
+				cooldown = 5,
 			},
 		},
 		startingWeapons = { primary = "ScoutRifle", secondary = "SMG" },
@@ -123,6 +164,7 @@ local Classes: { [string]: ClassDef } = {
 		color = Color3.fromRGB(90, 230, 130),
 		maxHealth = 110,
 		walkSpeed = 17,
+		element = "Ember",
 		passive = {
 			id = "MendingAura",
 			name = "Mending Aura",
@@ -147,6 +189,18 @@ local Classes: { [string]: ClassDef } = {
 				description = "A healing zone. Allies inside are healed and protected.",
 				cooldown = 0,
 			},
+			G = {
+				id = "HealingGrenade",
+				name = "Healing Grenade",
+				description = "Heals allies in the blast and burns enemies.",
+				cooldown = 12,
+			},
+			V = {
+				id = "SiphonStrike",
+				name = "Siphon Strike",
+				description = "A strike that heals you for 25.",
+				cooldown = 5,
+			},
 		},
 		startingWeapons = { primary = "AutoRifle", secondary = "HandCannon" },
 		hall = {
@@ -163,6 +217,7 @@ local Classes: { [string]: ClassDef } = {
 		color = Color3.fromRGB(255, 220, 70),
 		maxHealth = 110,
 		walkSpeed = 16,
+		element = "Volt",
 		passive = { id = "Scavenger", name = "Scavenger", description = "Kills refund 10% ammo. Turrets last longer." },
 		abilities = {
 			Q = {
@@ -177,6 +232,18 @@ local Classes: { [string]: ClassDef } = {
 				name = "Orbital Strike",
 				description = "The Meridian fires a laser at your target.",
 				cooldown = 0,
+			},
+			G = {
+				id = "ClusterGrenade",
+				name = "Cluster Grenade",
+				description = "One blast, then four smaller ones around it.",
+				cooldown = 14,
+			},
+			V = {
+				id = "ShockWrench",
+				name = "Shock Wrench",
+				description = "A wrench hit that stuns the enemy for 1.5s.",
+				cooldown = 5,
 			},
 		},
 		startingWeapons = { primary = "SMG", secondary = "ScoutRifle" },

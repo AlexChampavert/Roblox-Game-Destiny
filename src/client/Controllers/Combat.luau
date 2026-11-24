@@ -1,6 +1,8 @@
 -- Over-the-shoulder camera, shooting, abilities, and input (keyboard/mouse, gamepad, touch).
--- PC: LMB fire · R reload · 1/2 weapons · Q/E abilities · F super · Tab fireteam
--- Gamepad: RT fire · X reload · Y swap · LB/RB abilities · B super
+-- PC: LMB fire · RMB aim · Shift sprint · C slide · R reload · 1/2 weapons · Q/E abilities
+--     G grenade · V melee / finisher · F super · Tab fireteam
+-- Gamepad: RT fire · LT aim · L3 sprint · R3 slide · X reload · Y swap · LB/RB abilities
+--     D-pad up grenade · D-pad right melee · B super
 -- Mobile: on-screen buttons
 
 local CollectionService = game:GetService("CollectionService")
@@ -177,6 +179,18 @@ local KEY_ACTIONS: { [Enum.KeyCode]: () -> () } = {
 	[Enum.KeyCode.F] = function()
 		useAbility("F")
 	end,
+	[Enum.KeyCode.G] = function()
+		useAbility("G")
+	end,
+	[Enum.KeyCode.V] = function()
+		useAbility("V")
+	end,
+	[Enum.KeyCode.DPadUp] = function()
+		useAbility("G")
+	end,
+	[Enum.KeyCode.DPadRight] = function()
+		useAbility("V")
+	end,
 	[Enum.KeyCode.R] = reload,
 	[Enum.KeyCode.One] = function()
 		swapWeapon("primary")
@@ -323,6 +337,12 @@ local function bindTouchButtons()
 	end)
 	bind("TouchF", "SUPER", UDim2.new(1, -170, 1, -260), function()
 		useAbility("F")
+	end)
+	bind("TouchGrenade", "GREN", UDim2.new(1, -300, 1, -230), function()
+		useAbility("G")
+	end)
+	bind("TouchMelee", "MELEE", UDim2.new(1, -300, 1, -90), function()
+		useAbility("V")
 	end)
 	bind("TouchReload", "R", UDim2.new(1, -90, 1, -250), reload)
 	bind("TouchSwap", "SWAP", UDim2.new(1, -300, 1, -160), function()

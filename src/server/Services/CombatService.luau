@@ -313,7 +313,8 @@ function CombatService.FindEnemyModel(inst: Instance?): Model?
 end
 
 -- headshot ~= nil means the damage came from a weapon; nil = ability/turret
-function CombatService.DamageEnemy(model: Model, amount: number, attacker: Player?, headshot: boolean?)
+-- element: "Ember" | "Volt" | "Null" | nil (kinetic)
+function CombatService.DamageEnemy(model: Model, amount: number, attacker: Player?, headshot: boolean?, element: string?)
 	local hum = model:FindFirstChildOfClass("Humanoid")
 	if not hum or hum.Health <= 0 then
 		return
@@ -329,6 +330,7 @@ function CombatService.DamageEnemy(model: Model, amount: number, attacker: Playe
 		model:SetAttribute("LastHitBy", attacker.UserId)
 		model:SetAttribute("LastHitHeadshot", headshot == true)
 		model:SetAttribute("LastHitSource", if fromWeapon then "Weapon" else "Ability")
+		model:SetAttribute("LastHitElement", element)
 		if model:GetAttribute("IsBoss") then
 			CombatService.AddSuper(attacker, amount / hum.MaxHealth * Progression.SuperChargePerBossDamagePct)
 		end
