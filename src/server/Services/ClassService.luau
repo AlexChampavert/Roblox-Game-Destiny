@@ -86,7 +86,7 @@ function ClassService.SetClass(player: Player, classId: string): boolean
 	if player.Character then
 		applyToCharacter(player, player.Character)
 	end
-	Net.event("Notify"):FireClient(player, ("You are now a %s."):format(Classes.Defs[classId].name), "info")
+	Net.event("Notify"):FireClient(player, ("You joined the %s order."):format(Classes.Defs[classId].name), "info")
 	return true
 end
 

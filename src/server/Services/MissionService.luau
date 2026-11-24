@@ -35,7 +35,8 @@ local active: {
 	checkpoint: CFrame,
 	running: boolean,
 	startedAt: number,
-}? = nil
+}? =
+	nil
 
 local rng = Random.new()
 
@@ -84,7 +85,8 @@ local function scaling()
 	local n = math.max(#Players:GetPlayers(), 1)
 	return {
 		healthMult = 1 + (n - 1) * Progression.HealthScalePerExtraPlayer,
-		extra = (n - 1) * Progression.ExtraEnemiesPerExtraPlayer + (if workspace:GetAttribute("Modifier") == "Frenzy" then 1 else 0),
+		extra = (n - 1) * Progression.ExtraEnemiesPerExtraPlayer
+			+ (if workspace:GetAttribute("Modifier") == "Frenzy" then 1 else 0),
 	}
 end
 
@@ -265,7 +267,10 @@ function Runners.Escort(step, zone): boolean
 			end
 			travelled += stepDist
 		end
-		objective(if escorted then step.text else step.text .. " — stay close to the drone!", math.clamp(travelled / totalLength, 0, 1))
+		objective(
+			if escorted then step.text else step.text .. " — stay close to the drone!",
+			math.clamp(travelled / totalLength, 0, 1)
+		)
 		task.wait(0.1)
 	end
 	drone:Destroy()
@@ -296,16 +301,58 @@ end
 
 -- ===== Flow =====
 
+-- With StreamingEnabled, make sure the client has the area loaded before moving them there
+local function teleportPlayer(player: Player, cf: CFrame)
+	pcall(function()
+		player:RequestStreamAroundAsync(cf.Position, 5)
+	end)
+	local char = player.Character
+	if char then
+		Security.AllowMovement(player, 3)
+		char:PivotTo(cf)
+	end
+end
+MissionService.TeleportPlayer = teleportPlayer
+
+-- One SpawnLocation that follows the current checkpoint, so respawns land in the right place
+local missionSpawn: SpawnLocation? = nil
+local function setSpawn(cf: CFrame?)
+	local hubSpawn = workspace:FindFirstChild("HubSpawn", true) :: SpawnLocation?
+	if cf then
+		if not missionSpawn then
+			local sp = Instance.new("SpawnLocation")
+			sp.Name = "MissionSpawn"
+			sp.Size = Vector3.new(12, 1, 12)
+			sp.Anchored = true
+			sp.CanCollide = false
+			sp.Transparency = 1
+			sp.Neutral = true
+			sp.Duration = 3 -- short spawn protection
+			sp.Parent = workspace
+			missionSpawn = sp
+		end
+		local spawn = missionSpawn :: SpawnLocation
+		spawn.CFrame = cf - Vector3.new(0, 3, 0)
+		if hubSpawn then
+			hubSpawn.Enabled = false
+		end
+	else
+		if missionSpawn then
+			missionSpawn:Destroy()
+			missionSpawn = nil
+		end
+		if hubSpawn then
+			hubSpawn.Enabled = true
+		end
+	end
+end
+
 local function placeAtCheckpoint(player: Player)
 	if not active then
 		return
 	end
-	local char = player.Character
-	if char then
-		local offset = Vector3.new(rng:NextNumber(-6, 6), 0, rng:NextNumber(-6, 6))
-		Security.AllowMovement(player, 2)
-		char:PivotTo(active.checkpoint + offset)
-	end
+	local offset = Vector3.new(rng:NextNumber(-6, 6), 0, rng:NextNumber(-6, 6))
+	teleportPlayer(player, active.checkpoint + offset)
 end
 
 local function finish()
@@ -347,6 +394,7 @@ function MissionService.ReturnToHub()
 		if a then
 			MissionBuilder.Clear(a.layout)
 		end
+		setSpawn(nil)
 		active = nil
 		MissionBuilder.RestoreTheme()
 		HubBuilder.ApplyLighting()
@@ -362,7 +410,7 @@ function MissionService.ReturnToHub()
 				if p.Character:GetAttribute("Downed") or (hum and hum.Health <= 0) then
 					p:LoadCharacter()
 				else
-					p.Character:PivotTo(HubBuilder.SpawnCFrame)
+					teleportPlayer(p, HubBuilder.SpawnCFrame)
 				end
 			end
 		end
@@ -400,7 +448,9 @@ function MissionService.Start(missionId: string)
 	local origin = if workspace:GetAttribute("ReservedServer") then Vector3.zero else STUDIO_ORIGIN
 	MissionBuilder.ApplyTheme(def.theme)
 	local layout = MissionBuilder.Build(def, origin)
-	active = { def = def, layout = layout, stepIndex = 0, checkpoint = layout.start, running = true, startedAt = os.clock() }
+	active =
+		{ def = def, layout = layout, stepIndex = 0, checkpoint = layout.start, running = true, startedAt = os.clock() }
+	setSpawn(layout.start)
 
 	for _, p in Players:GetPlayers() do
 		Telemetry.Step(p, Telemetry.Funnel.FirstLaunch)
@@ -410,7 +460,15 @@ function MissionService.Start(missionId: string)
 	end
 	notifyAll(def.intro, "story")
 	if workspace:GetAttribute("Featured") then
-		notifyAll("Featured mission this week: double XP!" .. (if workspace:GetAttribute("Modifier") then " Modifier: " .. workspace:GetAttribute("Modifier") else ""), "info")
+		notifyAll(
+			"Featured mission this week: double XP!"
+				.. (
+					if workspace:GetAttribute("Modifier")
+						then " Modifier: " .. workspace:GetAttribute("Modifier")
+						else ""
+				),
+			"info"
+		)
 	end
 
 	task.spawn(function()
@@ -449,6 +507,7 @@ function MissionService.Start(missionId: string)
 			local nextZone = layout.zones[a.stepIndex + 1]
 			if nextZone then
 				a.checkpoint = nextZone.checkpoint
+				setSpawn(nextZone.checkpoint)
 				notifyAll("Checkpoint reached", "info")
 			end
 		end

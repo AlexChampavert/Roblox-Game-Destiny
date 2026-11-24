@@ -67,7 +67,11 @@ function BountyService.Track(player: Player, event: string, amount: number, fact
 					entry.done = true
 					ProgressionService.AddXP(player, def.xp)
 					ProgressionService.AddShards(player, def.shards)
-					Net.event("Notify"):FireClient(player, ("BOUNTY COMPLETE: %s  (+%d XP, +%d Shards)"):format(def.text, def.xp, def.shards), "levelup")
+					Net.event("Notify"):FireClient(
+						player,
+						("BOUNTY COMPLETE: %s  (+%d XP, +%d Shards)"):format(def.text, def.xp, def.shards),
+						"levelup"
+					)
 				end
 			end
 		end

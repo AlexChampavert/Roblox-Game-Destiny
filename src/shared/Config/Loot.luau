@@ -8,7 +8,13 @@ export type Rarity = { id: string, name: string, color: Color3, perks: number, d
 Loot.Rarities = {
 	Common = { id = "Common", name = "Common", color = Color3.fromRGB(200, 200, 200), perks = 0, dismantle = 5 },
 	Rare = { id = "Rare", name = "Rare", color = Color3.fromRGB(80, 140, 255), perks = 1, dismantle = 15 },
-	Legendary = { id = "Legendary", name = "Legendary", color = Color3.fromRGB(190, 90, 255), perks = 2, dismantle = 40 },
+	Legendary = {
+		id = "Legendary",
+		name = "Legendary",
+		color = Color3.fromRGB(190, 90, 255),
+		perks = 2,
+		dismantle = 40,
+	},
 	Exotic = { id = "Exotic", name = "Exotic", color = Color3.fromRGB(255, 205, 60), perks = 1, dismantle = 100 },
 } :: { [string]: Rarity }
 
@@ -33,7 +39,10 @@ Loot.PerkPool = { "DeepMag", "Outlaw", "Rampage", "Headseeker", "ExplosivePayloa
 
 -- Exotic-only perk
 Loot.ExoticPerks = {
-	StarfallRound = { name = "Starfall Round", description = "Every 6th hit calls down a star fragment (80 dmg, small area)." },
+	StarfallRound = {
+		name = "Starfall Round",
+		description = "Every 6th hit calls down a star fragment (80 dmg, small area).",
+	},
 }
 
 Loot.InventoryCap = 40

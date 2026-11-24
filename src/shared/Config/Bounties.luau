@@ -17,8 +17,24 @@ local Bounties = {}
 
 Bounties.Daily = {
 	{ id = "d_kills", text = "Defeat 60 enemies", event = "Kill", target = 60, xp = 500, shards = 30 },
-	{ id = "d_hollow", text = "Defeat 40 Hollow", event = "Kill", faction = "Hollow", target = 40, xp = 450, shards = 25 },
-	{ id = "d_regime", text = "Defeat 25 Iron Regime soldiers", event = "Kill", faction = "Regime", target = 25, xp = 500, shards = 30 },
+	{
+		id = "d_hollow",
+		text = "Defeat 40 Hollow",
+		event = "Kill",
+		faction = "Hollow",
+		target = 40,
+		xp = 450,
+		shards = 25,
+	},
+	{
+		id = "d_regime",
+		text = "Defeat 25 Iron Regime soldiers",
+		event = "Kill",
+		faction = "Regime",
+		target = 25,
+		xp = 500,
+		shards = 30,
+	},
 	{ id = "d_heads", text = "Land 30 headshot kills", event = "Headshot", target = 30, xp = 550, shards = 35 },
 	{ id = "d_ability", text = "Get 15 ability kills", event = "AbilityKill", target = 15, xp = 500, shards = 30 },
 	{ id = "d_mission", text = "Complete 2 missions", event = "Mission", target = 2, xp = 700, shards = 40 },

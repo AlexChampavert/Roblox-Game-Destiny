@@ -130,7 +130,8 @@ local function attachGun(player: Player)
 	local weaponId = CombatService.GetWeaponId(player, st.slot)
 	local w = Weapons[weaponId]
 	local item = CombatService.GetWeaponItem(player, st.slot)
-	local rarityColor = if item and item.rarity == "Exotic" then Color3.fromRGB(255, 205, 60)
+	local rarityColor = if item and item.rarity == "Exotic"
+		then Color3.fromRGB(255, 205, 60)
 		elseif item and item.rarity == "Legendary" then Color3.fromRGB(190, 90, 255)
 		elseif item and item.rarity == "Rare" then Color3.fromRGB(80, 140, 255)
 		else Color3.fromRGB(200, 200, 200)
@@ -158,9 +159,27 @@ local function attachGun(player: Player)
 	end
 	-- Barrel along gun-local -Z
 	local len = w.length
-	local body = piece("Handle", Vector3.new(0.35, 0.55, len), CFrame.new(0, 0, -len / 2 + 0.4), Color3.fromRGB(45, 48, 58), Enum.Material.Metal)
-	piece("Grip", Vector3.new(0.3, 0.7, 0.35), CFrame.new(0, -0.3, 0.1), Color3.fromRGB(30, 30, 35), Enum.Material.Metal)
-	piece("Stripe", Vector3.new(0.37, 0.12, len * 0.6), CFrame.new(0, 0.2, -len / 2 + 0.4), rarityColor, Enum.Material.Neon)
+	local body = piece(
+		"Handle",
+		Vector3.new(0.35, 0.55, len),
+		CFrame.new(0, 0, -len / 2 + 0.4),
+		Color3.fromRGB(45, 48, 58),
+		Enum.Material.Metal
+	)
+	piece(
+		"Grip",
+		Vector3.new(0.3, 0.7, 0.35),
+		CFrame.new(0, -0.3, 0.1),
+		Color3.fromRGB(30, 30, 35),
+		Enum.Material.Metal
+	)
+	piece(
+		"Stripe",
+		Vector3.new(0.37, 0.12, len * 0.6),
+		CFrame.new(0, 0.2, -len / 2 + 0.4),
+		rarityColor,
+		Enum.Material.Neon
+	)
 	local muzzle = Instance.new("Attachment")
 	muzzle.Name = "Muzzle"
 	muzzle.Position = Vector3.new(0, 0.1, -len / 2)
@@ -189,8 +208,16 @@ function CombatService.RefreshLoadout(player: Player)
 	local st = states[player]
 	if not st then
 		st = {
-			slot = "primary", ammo = {}, lastFire = 0, reloadingUntil = 0, reloadToken = 0,
-			rampageStacks = 0, rampageUntil = 0, killClipPending = 0, killClipUntil = 0, starfallHits = 0,
+			slot = "primary",
+			ammo = {},
+			lastFire = 0,
+			reloadingUntil = 0,
+			reloadToken = 0,
+			rampageStacks = 0,
+			rampageUntil = 0,
+			killClipPending = 0,
+			killClipUntil = 0,
+			starfallHits = 0,
 		}
 		states[player] = st
 	end
@@ -257,19 +284,20 @@ end
 -- ===== Damage helpers =====
 
 function CombatService.AddSuper(player: Player, amount: number)
-	if amount > 0 and (player:GetAttribute("OrderRank") or 0) >= 20 then
+	if amount > 0 and (tonumber(player:GetAttribute("OrderRank")) or 0) >= 20 then
 		amount *= 1.25 -- Order upgrade: SuperGain
 	end
-	local charge = (player:GetAttribute("SuperCharge") or 0) + amount
+	local charge = (tonumber(player:GetAttribute("SuperCharge")) or 0) + amount
 	player:SetAttribute("SuperCharge", math.clamp(charge, 0, 100))
 end
 
 -- Damage reduction buff on a character (Bastion, Sanctuary, Lifeline...)
 function CombatService.ApplyDamageReduction(char: Model, amount: number, duration: number)
 	local t = now()
-	local current = if (char:GetAttribute("DRUntil") or 0) > t then (char:GetAttribute("DR") or 0) else 0
+	local drUntil = tonumber(char:GetAttribute("DRUntil")) or 0
+	local current = if drUntil > t then (tonumber(char:GetAttribute("DR")) or 0) else 0
 	char:SetAttribute("DR", math.max(current, amount))
-	char:SetAttribute("DRUntil", math.max(char:GetAttribute("DRUntil") or 0, t + duration))
+	char:SetAttribute("DRUntil", math.max(drUntil, t + duration))
 end
 
 function CombatService.FindEnemyModel(inst: Instance?): Model?
@@ -528,7 +556,11 @@ local function onFire(player: Player, aimPoint: any)
 
 				if explosive then
 					for _, other in CollectionService:GetTagged("Enemy") do
-						if other ~= model and other.PrimaryPart and (other.PrimaryPart.Position - hitPos).Magnitude < 6 then
+						if
+							other ~= model
+							and other.PrimaryPart
+							and (other.PrimaryPart.Position - hitPos).Magnitude < 6
+						then
 							CombatService.DamageEnemy(other, damage * 0.25, player, false)
 						end
 					end
@@ -537,8 +569,17 @@ local function onFire(player: Player, aimPoint: any)
 					st.starfallHits += 1
 					if st.starfallHits >= 6 then
 						st.starfallHits = 0
-						Net.event("Effect"):FireAllClients("Beam", { from = hitPos + Vector3.new(0, 120, 0), to = hitPos, color = Color3.fromRGB(255, 220, 120), width = 3, duration = 0.5 })
-						Net.event("Effect"):FireAllClients("Explosion", { position = hitPos, radius = 8, color = Color3.fromRGB(255, 220, 120) })
+						Net.event("Effect"):FireAllClients("Beam", {
+							from = hitPos + Vector3.new(0, 120, 0),
+							to = hitPos,
+							color = Color3.fromRGB(255, 220, 120),
+							width = 3,
+							duration = 0.5,
+						})
+						Net.event("Effect"):FireAllClients(
+							"Explosion",
+							{ position = hitPos, radius = 8, color = Color3.fromRGB(255, 220, 120) }
+						)
 						for _, other in CollectionService:GetTagged("Enemy") do
 							if other.PrimaryPart and (other.PrimaryPart.Position - hitPos).Magnitude < 8 then
 								CombatService.DamageEnemy(other, 80, player, false)

@@ -97,23 +97,45 @@ end
 -- ===== Input =====
 
 local KEY_ACTIONS: { [Enum.KeyCode]: () -> () } = {
-	[Enum.KeyCode.Q] = function() useAbility("Q") end,
-	[Enum.KeyCode.E] = function() useAbility("E") end,
-	[Enum.KeyCode.F] = function() useAbility("F") end,
+	[Enum.KeyCode.Q] = function()
+		useAbility("Q")
+	end,
+	[Enum.KeyCode.E] = function()
+		useAbility("E")
+	end,
+	[Enum.KeyCode.F] = function()
+		useAbility("F")
+	end,
 	[Enum.KeyCode.R] = reload,
-	[Enum.KeyCode.One] = function() swapWeapon("primary") end,
-	[Enum.KeyCode.Two] = function() swapWeapon("secondary") end,
+	[Enum.KeyCode.One] = function()
+		swapWeapon("primary")
+	end,
+	[Enum.KeyCode.Two] = function()
+		swapWeapon("secondary")
+	end,
 	[Enum.KeyCode.Tab] = function()
 		if Menus then
-			if Menus.IsOpen() then Menus.Close() else Menus.Open("Fireteam") end
+			if Menus.IsOpen() then
+				Menus.Close()
+			else
+				Menus.Open("Fireteam")
+			end
 		end
 	end,
 	-- Gamepad
-	[Enum.KeyCode.ButtonL1] = function() useAbility("Q") end,
-	[Enum.KeyCode.ButtonR1] = function() useAbility("E") end,
-	[Enum.KeyCode.ButtonB] = function() useAbility("F") end,
+	[Enum.KeyCode.ButtonL1] = function()
+		useAbility("Q")
+	end,
+	[Enum.KeyCode.ButtonR1] = function()
+		useAbility("E")
+	end,
+	[Enum.KeyCode.ButtonB] = function()
+		useAbility("F")
+	end,
 	[Enum.KeyCode.ButtonX] = reload,
-	[Enum.KeyCode.ButtonY] = function() swapWeapon(nil) end,
+	[Enum.KeyCode.ButtonY] = function()
+		swapWeapon(nil)
+	end,
 }
 
 local function onInputBegan(input: InputObject, processed: boolean)
@@ -159,11 +181,19 @@ local function bindTouchButtons()
 	end, function()
 		firing = false
 	end)
-	bind("TouchQ", "Q", UDim2.new(1, -230, 1, -130), function() useAbility("Q") end)
-	bind("TouchE", "E", UDim2.new(1, -230, 1, -200), function() useAbility("E") end)
-	bind("TouchF", "SUPER", UDim2.new(1, -170, 1, -260), function() useAbility("F") end)
+	bind("TouchQ", "Q", UDim2.new(1, -230, 1, -130), function()
+		useAbility("Q")
+	end)
+	bind("TouchE", "E", UDim2.new(1, -230, 1, -200), function()
+		useAbility("E")
+	end)
+	bind("TouchF", "SUPER", UDim2.new(1, -170, 1, -260), function()
+		useAbility("F")
+	end)
 	bind("TouchReload", "R", UDim2.new(1, -90, 1, -250), reload)
-	bind("TouchSwap", "SWAP", UDim2.new(1, -300, 1, -160), function() swapWeapon(nil) end)
+	bind("TouchSwap", "SWAP", UDim2.new(1, -300, 1, -160), function()
+		swapWeapon(nil)
+	end)
 end
 
 -- ===== Per frame =====
@@ -268,7 +298,11 @@ function Combat.PredictShot(w, aim: Vector3)
 		local dir = baseDir
 		if w.pellets > 1 or w.spread > 1 then
 			local cf = CFrame.lookAt(Vector3.zero, baseDir)
-			dir = (cf * CFrame.Angles(0, 0, math.random() * math.pi * 2) * CFrame.Angles(math.rad(math.random() * w.spread), 0, 0)).LookVector
+			dir = (cf * CFrame.Angles(0, 0, math.random() * math.pi * 2) * CFrame.Angles(
+				math.rad(math.random() * w.spread),
+				0,
+				0
+			)).LookVector
 		end
 		local result = workspace:Raycast(head.Position, dir * w.range, params)
 		local hitPos = if result then result.Position else head.Position + dir * w.range
@@ -312,8 +346,12 @@ local function poseCharacter(char: Model, pitch: number?, reloading: boolean)
 		end
 	end
 	if pitch == nil then
-		if right and originalC0[right] then right.C0 = originalC0[right] end
-		if left and originalC0[left] then left.C0 = originalC0[left] end
+		if right and originalC0[right] then
+			right.C0 = originalC0[right]
+		end
+		if left and originalC0[left] then
+			left.C0 = originalC0[left]
+		end
 		return
 	end
 	local p = if reloading then -0.6 else pitch
@@ -344,7 +382,11 @@ local function updatePoses()
 		local char = other.Character
 		if other ~= player and char then
 			local aiming = mission and char:FindFirstChild("Gun") ~= nil and not char:GetAttribute("Downed")
-			poseCharacter(char, if aiming then (char:GetAttribute("AimPitch") or 0) else nil, other:GetAttribute("Reloading") == true)
+			poseCharacter(
+				char,
+				if aiming then (char:GetAttribute("AimPitch") or 0) else nil,
+				other:GetAttribute("Reloading") == true
+			)
 		end
 	end
 end

@@ -23,8 +23,19 @@ local refs: { [string]: any } = {}
 local feed: Frame
 
 local function bar(parent: Instance, name: string, position: UDim2, size: UDim2, color: Color3): (Frame, Frame)
-	local back = UI.new("Frame", { Name = name, Position = position, Size = size, BackgroundColor3 = Color3.fromRGB(25, 28, 38), BorderSizePixel = 0, Parent = parent }, { UI.corner(4) })
-	local fill = UI.new("Frame", { Name = "Fill", Size = UDim2.fromScale(1, 1), BackgroundColor3 = color, BorderSizePixel = 0, Parent = back }, { UI.corner(4) })
+	local back = UI.new("Frame", {
+		Name = name,
+		Position = position,
+		Size = size,
+		BackgroundColor3 = Color3.fromRGB(25, 28, 38),
+		BorderSizePixel = 0,
+		Parent = parent,
+	}, { UI.corner(4) })
+	local fill = UI.new(
+		"Frame",
+		{ Name = "Fill", Size = UDim2.fromScale(1, 1), BackgroundColor3 = color, BorderSizePixel = 0, Parent = back },
+		{ UI.corner(4) }
+	)
 	return back, fill
 end
 
@@ -37,51 +48,158 @@ local function abilityBox(parent: Instance, key: string, x: number): { [string]:
 		BackgroundColor3 = C.panel,
 		Parent = parent,
 	}, { UI.corner(10), UI.stroke() })
-	local cover = UI.new("Frame", { Name = "Cooldown", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35, BorderSizePixel = 0, ZIndex = 2, Parent = box }, { UI.corner(10) })
-	local keyLabel = UI.label({ Text = key, Size = UDim2.new(0, 18, 0, 18), Position = UDim2.fromOffset(4, 2), TextColor3 = C.accent, ZIndex = 3, Parent = box })
-	local name = UI.label({ Text = "", Size = UDim2.new(1, -6, 0.42, 0), Position = UDim2.new(0, 3, 0.52, 0), TextXAlignment = Enum.TextXAlignment.Center, ZIndex = 3, Parent = box })
-	local timer = UI.label({ Text = "", Size = UDim2.new(1, 0, 0.4, 0), Position = UDim2.fromScale(0, 0.12), TextXAlignment = Enum.TextXAlignment.Center, TextColor3 = C.gold, ZIndex = 3, Parent = box })
+	local cover = UI.new("Frame", {
+		Name = "Cooldown",
+		AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.fromScale(0, 1),
+		Size = UDim2.fromScale(1, 0),
+		BackgroundColor3 = Color3.new(0, 0, 0),
+		BackgroundTransparency = 0.35,
+		BorderSizePixel = 0,
+		ZIndex = 2,
+		Parent = box,
+	}, { UI.corner(10) })
+	local keyLabel = UI.label({
+		Text = key,
+		Size = UDim2.new(0, 18, 0, 18),
+		Position = UDim2.fromOffset(4, 2),
+		TextColor3 = C.accent,
+		ZIndex = 3,
+		Parent = box,
+	})
+	local name = UI.label({
+		Text = "",
+		Size = UDim2.new(1, -6, 0.42, 0),
+		Position = UDim2.new(0, 3, 0.52, 0),
+		TextXAlignment = Enum.TextXAlignment.Center,
+		ZIndex = 3,
+		Parent = box,
+	})
+	local timer = UI.label({
+		Text = "",
+		Size = UDim2.new(1, 0, 0.4, 0),
+		Position = UDim2.fromScale(0, 0.12),
+		TextXAlignment = Enum.TextXAlignment.Center,
+		TextColor3 = C.gold,
+		ZIndex = 3,
+		Parent = box,
+	})
 	return { box = box, cover = cover, name = name, timer = timer, key = keyLabel }
 end
 
 local function build()
-	gui = UI.new("ScreenGui", { Name = "HUD", ResetOnSpawn = false, IgnoreGuiInset = true, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, Parent = player:WaitForChild("PlayerGui") })
+	gui = UI.new("ScreenGui", {
+		Name = "HUD",
+		ResetOnSpawn = false,
+		IgnoreGuiInset = true,
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+		Parent = player:WaitForChild("PlayerGui"),
+	})
 
 	-- Crosshair
-	refs.crosshair = UI.new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(6, 6), BackgroundColor3 = Color3.new(1, 1, 1), Parent = gui }, { UI.corner(3), UI.stroke(Color3.new(0, 0, 0), 1) })
+	refs.crosshair = UI.new("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.5),
+		Size = UDim2.fromOffset(6, 6),
+		BackgroundColor3 = Color3.new(1, 1, 1),
+		Parent = gui,
+	}, { UI.corner(3), UI.stroke(Color3.new(0, 0, 0), 1) })
 
 	-- Top-left: level, XP, power, shards
-	local profile = UI.new("Frame", { Position = UDim2.fromOffset(14, 14), Size = UDim2.fromOffset(250, 64), BackgroundColor3 = C.bg, BackgroundTransparency = 0.25, Parent = gui }, { UI.corner(10), UI.padding(8) })
+	local profile = UI.new("Frame", {
+		Position = UDim2.fromOffset(14, 14),
+		Size = UDim2.fromOffset(250, 64),
+		BackgroundColor3 = C.bg,
+		BackgroundTransparency = 0.25,
+		Parent = gui,
+	}, { UI.corner(10), UI.padding(8) })
 	refs.level = UI.label({ Text = "LV 1", Size = UDim2.new(0.35, 0, 0.45, 0), TextColor3 = C.gold, Parent = profile })
-	refs.power = UI.label({ Text = "⚡ 10", Size = UDim2.new(0.3, 0, 0.45, 0), Position = UDim2.fromScale(0.36, 0), TextColor3 = C.accent, Parent = profile })
-	refs.shards = UI.label({ Text = "◆ 0", Size = UDim2.new(0.3, 0, 0.45, 0), Position = UDim2.fromScale(0.68, 0), TextColor3 = Color3.fromRGB(190, 150, 255), Parent = profile })
+	refs.power = UI.label({
+		Text = "⚡ 10",
+		Size = UDim2.new(0.3, 0, 0.45, 0),
+		Position = UDim2.fromScale(0.36, 0),
+		TextColor3 = C.accent,
+		Parent = profile,
+	})
+	refs.shards = UI.label({
+		Text = "◆ 0",
+		Size = UDim2.new(0.3, 0, 0.45, 0),
+		Position = UDim2.fromScale(0.68, 0),
+		TextColor3 = Color3.fromRGB(190, 150, 255),
+		Parent = profile,
+	})
 	local _, xpFill = bar(profile, "XP", UDim2.fromScale(0, 0.62), UDim2.new(1, 0, 0.25, 0), C.gold)
 	refs.xpFill = xpFill
 
 	-- Top-right buttons
-	local buttons = UI.new("Frame", { AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -14, 0, 14), Size = UDim2.fromOffset(520, 40), BackgroundTransparency = 1, Parent = gui }, {
-		UI.new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Right, Padding = UDim.new(0, 8) }),
+	local buttons = UI.new("Frame", {
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -14, 0, 14),
+		Size = UDim2.fromOffset(520, 40),
+		BackgroundTransparency = 1,
+		Parent = gui,
+	}, {
+		UI.new("UIListLayout", {
+			FillDirection = Enum.FillDirection.Horizontal,
+			HorizontalAlignment = Enum.HorizontalAlignment.Right,
+			Padding = UDim.new(0, 8),
+		}),
 	})
 	refs.buttons = buttons
 
 	-- Objective (top-center)
-	local obj = UI.new("Frame", { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 14), Size = UDim2.fromOffset(420, 70), BackgroundColor3 = C.bg, BackgroundTransparency = 0.25, Visible = false, Parent = gui }, { UI.corner(10), UI.padding(8) })
+	local obj = UI.new("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 14),
+		Size = UDim2.fromOffset(420, 70),
+		BackgroundColor3 = C.bg,
+		BackgroundTransparency = 0.25,
+		Visible = false,
+		Parent = gui,
+	}, { UI.corner(10), UI.padding(8) })
 	refs.objective = obj
 	refs.objMission = UI.label({ Text = "", Size = UDim2.new(1, 0, 0.3, 0), TextColor3 = C.accent, Parent = obj })
-	refs.objText = UI.label({ Text = "", Size = UDim2.new(1, 0, 0.38, 0), Position = UDim2.fromScale(0, 0.32), Parent = obj })
+	refs.objText =
+		UI.label({ Text = "", Size = UDim2.new(1, 0, 0.38, 0), Position = UDim2.fromScale(0, 0.32), Parent = obj })
 	local objBar, objFill = bar(obj, "Progress", UDim2.fromScale(0, 0.82), UDim2.new(1, 0, 0.16, 0), C.accent)
 	refs.objBar, refs.objFill = objBar, objFill
 
 	-- Health (bottom-left)
-	local hp = UI.new("Frame", { AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 14, 1, -14), Size = UDim2.fromOffset(260, 44), BackgroundColor3 = C.bg, BackgroundTransparency = 0.25, Parent = gui }, { UI.corner(10), UI.padding(8) })
+	local hp = UI.new("Frame", {
+		AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.new(0, 14, 1, -14),
+		Size = UDim2.fromOffset(260, 44),
+		BackgroundColor3 = C.bg,
+		BackgroundTransparency = 0.25,
+		Parent = gui,
+	}, { UI.corner(10), UI.padding(8) })
 	refs.className = UI.label({ Text = "", Size = UDim2.new(1, 0, 0.42, 0), TextColor3 = C.dim, Parent = hp })
 	local _, hpFill = bar(hp, "Health", UDim2.fromScale(0, 0.55), UDim2.new(1, 0, 0.45, 0), C.good)
 	refs.hpFill = hpFill
 
 	-- Ammo (bottom-right)
-	local ammo = UI.new("Frame", { AnchorPoint = Vector2.new(1, 1), Position = UDim2.new(1, -14, 1, -14), Size = UDim2.fromOffset(200, 60), BackgroundColor3 = C.bg, BackgroundTransparency = 0.25, Parent = gui }, { UI.corner(10), UI.padding(8) })
-	refs.weapon = UI.label({ Text = "", Size = UDim2.new(1, 0, 0.38, 0), TextColor3 = C.dim, TextXAlignment = Enum.TextXAlignment.Right, Parent = ammo })
-	refs.ammo = UI.label({ Text = "", Size = UDim2.new(1, 0, 0.58, 0), Position = UDim2.fromScale(0, 0.42), TextXAlignment = Enum.TextXAlignment.Right, Parent = ammo })
+	local ammo = UI.new("Frame", {
+		AnchorPoint = Vector2.new(1, 1),
+		Position = UDim2.new(1, -14, 1, -14),
+		Size = UDim2.fromOffset(200, 60),
+		BackgroundColor3 = C.bg,
+		BackgroundTransparency = 0.25,
+		Parent = gui,
+	}, { UI.corner(10), UI.padding(8) })
+	refs.weapon = UI.label({
+		Text = "",
+		Size = UDim2.new(1, 0, 0.38, 0),
+		TextColor3 = C.dim,
+		TextXAlignment = Enum.TextXAlignment.Right,
+		Parent = ammo,
+	})
+	refs.ammo = UI.label({
+		Text = "",
+		Size = UDim2.new(1, 0, 0.58, 0),
+		Position = UDim2.fromScale(0, 0.42),
+		TextXAlignment = Enum.TextXAlignment.Right,
+		Parent = ammo,
+	})
 	refs.ammoPanel = ammo
 
 	-- Abilities (bottom-center)
@@ -90,27 +208,82 @@ local function build()
 	refs.E = abilityBox(gui, "E", 80)
 
 	-- Notification feed (right side)
-	feed = UI.new("Frame", { AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -14, 0, 70), Size = UDim2.fromOffset(360, 300), BackgroundTransparency = 1, Parent = gui }, {
-		UI.new("UIListLayout", { VerticalAlignment = Enum.VerticalAlignment.Top, Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }),
+	feed = UI.new("Frame", {
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -14, 0, 70),
+		Size = UDim2.fromOffset(360, 300),
+		BackgroundTransparency = 1,
+		Parent = gui,
+	}, {
+		UI.new("UIListLayout", {
+			VerticalAlignment = Enum.VerticalAlignment.Top,
+			Padding = UDim.new(0, 6),
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
 	})
 
 	-- Hitmarker (4 ticks around the crosshair)
-	local hm = UI.new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(28, 28), BackgroundTransparency = 1, Visible = false, Parent = gui })
+	local hm = UI.new("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.5),
+		Size = UDim2.fromOffset(28, 28),
+		BackgroundTransparency = 1,
+		Visible = false,
+		Parent = gui,
+	})
 	for _, rot in { 45, -45 } do
-		UI.new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(28, 3), Rotation = rot, BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, Parent = hm })
+		UI.new("Frame", {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.5),
+			Size = UDim2.fromOffset(28, 3),
+			Rotation = rot,
+			BackgroundColor3 = Color3.new(1, 1, 1),
+			BorderSizePixel = 0,
+			Parent = hm,
+		})
 	end
 	refs.hitmarker = hm
 
 	-- Downed overlay
-	local downed = UI.new("Frame", { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0.22, 0), Size = UDim2.fromOffset(420, 70), BackgroundColor3 = Color3.fromRGB(60, 0, 0), BackgroundTransparency = 0.2, Visible = false, Parent = gui }, { UI.corner(10), UI.padding(8) })
-	refs.downedText = UI.label({ Text = "", Size = UDim2.fromScale(1, 1), TextXAlignment = Enum.TextXAlignment.Center, TextColor3 = Color3.fromRGB(255, 200, 200), Parent = downed })
+	local downed = UI.new("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0.22, 0),
+		Size = UDim2.fromOffset(420, 70),
+		BackgroundColor3 = Color3.fromRGB(60, 0, 0),
+		BackgroundTransparency = 0.2,
+		Visible = false,
+		Parent = gui,
+	}, { UI.corner(10), UI.padding(8) })
+	refs.downedText = UI.label({
+		Text = "",
+		Size = UDim2.fromScale(1, 1),
+		TextXAlignment = Enum.TextXAlignment.Center,
+		TextColor3 = Color3.fromRGB(255, 200, 200),
+		Parent = downed,
+	})
 	refs.downed = downed
 
 	-- Matchmaking indicator
-	refs.mm = UI.label({ Text = "", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 90), Size = UDim2.fromOffset(360, 24), TextXAlignment = Enum.TextXAlignment.Center, TextColor3 = C.gold, Visible = false, Parent = gui })
+	refs.mm = UI.label({
+		Text = "",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 90),
+		Size = UDim2.fromOffset(360, 24),
+		TextXAlignment = Enum.TextXAlignment.Center,
+		TextColor3 = C.gold,
+		Visible = false,
+		Parent = gui,
+	})
 
 	-- Hurt flash
-	refs.hurt = UI.new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.fromRGB(200, 0, 0), BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 0, Parent = gui })
+	refs.hurt = UI.new("Frame", {
+		Size = UDim2.fromScale(1, 1),
+		BackgroundColor3 = Color3.fromRGB(200, 0, 0),
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		ZIndex = 0,
+		Parent = gui,
+	})
 end
 
 local KIND_COLORS = {
@@ -134,7 +307,13 @@ function HUD.Notify(text: string, kind: string?)
 		LayoutOrder = order,
 		Parent = feed,
 	}, { UI.corner(8), UI.padding(6) })
-	UI.label({ Text = text, Size = UDim2.fromScale(1, 1), TextColor3 = KIND_COLORS[kind or "info"] or C.text, TextWrapped = true, Parent = item })
+	UI.label({
+		Text = text,
+		Size = UDim2.fromScale(1, 1),
+		TextColor3 = KIND_COLORS[kind or "info"] or C.text,
+		TextWrapped = true,
+		Parent = item,
+	})
 	local children = {}
 	for _, c in feed:GetChildren() do
 		if c:IsA("Frame") then
@@ -199,14 +378,19 @@ local function update()
 	local reloading = player:GetAttribute("Reloading")
 	local rarity = Loot.Rarities[player:GetAttribute("WeaponRarity") or "Common"]
 	refs.weapon.TextColor3 = if rarity then rarity.color else C.dim
-	refs.weapon.Text = (player:GetAttribute("WeaponName") or "") .. (if (player:GetAttribute("EmpoweredShots") or 0) > 0 then "  ✦ DEADEYE" else "")
-	refs.ammo.Text = if reloading then "RELOADING" else ("%d / %d"):format(player:GetAttribute("Ammo") or 0, player:GetAttribute("MagSize") or 0)
+	refs.weapon.Text = (player:GetAttribute("WeaponName") or "")
+		.. (if (player:GetAttribute("EmpoweredShots") or 0) > 0 then "  ✦ DEADEYE" else "")
+	refs.ammo.Text = if reloading
+		then "RELOADING"
+		else ("%d / %d"):format(player:GetAttribute("Ammo") or 0, player:GetAttribute("MagSize") or 0)
 
 	-- Downed
 	local downedUntil = char and char:GetAttribute("Downed") and char:GetAttribute("DownedUntil")
 	refs.downed.Visible = downedUntil ~= nil
 	if downedUntil then
-		refs.downedText.Text = ("DOWNED — a teammate can revive you (%ds)"):format(math.max(0, math.ceil(downedUntil - workspace:GetServerTimeNow())))
+		refs.downedText.Text = ("DOWNED — a teammate can revive you (%ds)"):format(
+			math.max(0, math.ceil(downedUntil - workspace:GetServerTimeNow()))
+		)
 	end
 
 	-- Matchmaking
@@ -255,7 +439,16 @@ function HUD.Start()
 	Net.event("Notify").OnClientEvent:Connect(HUD.Notify)
 	Net.event("Loot").OnClientEvent:Connect(function(item)
 		local tag = if item.pinnacle then "PINNACLE " else ""
-		HUD.Notify(("%s%s %s  ⚡%d  %s"):format(tag, item.rarity, item.weaponName, item.power, if item.equipped then "(equipped)" else "(in inventory)"), "loot")
+		HUD.Notify(
+			("%s%s %s  ⚡%d  %s"):format(
+				tag,
+				item.rarity,
+				item.weaponName,
+				item.power,
+				if item.equipped then "(equipped)" else "(in inventory)"
+			),
+			"loot"
+		)
 	end)
 	Net.event("ObjectiveUpdate").OnClientEvent:Connect(function(data)
 		if not data then

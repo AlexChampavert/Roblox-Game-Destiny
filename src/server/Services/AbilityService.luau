@@ -62,7 +62,14 @@ local function alliesInRadius(pos: Vector3, radius: number): { Player }
 	return list
 end
 
-local function zonePart(name: string, pos: Vector3, size: Vector3, color: Color3, shape: Enum.PartType, transparency: number): Part
+local function zonePart(
+	name: string,
+	pos: Vector3,
+	size: Vector3,
+	color: Color3,
+	shape: Enum.PartType,
+	transparency: number
+): Part
 	local p = Instance.new("Part")
 	p.Name = name
 	p.Shape = shape
@@ -127,7 +134,8 @@ end
 
 Abilities.Bastion = function(ctx)
 	local center = ctx.root.Position
-	local dome = zonePart("Bastion", center, Vector3.new(30, 30, 30), Color3.fromRGB(255, 180, 80), Enum.PartType.Ball, 0.2)
+	local dome =
+		zonePart("Bastion", center, Vector3.new(30, 30, 30), Color3.fromRGB(255, 180, 80), Enum.PartType.Ball, 0.2)
 	Debris:AddItem(dome, 10)
 	task.spawn(function()
 		local endTime = os.clock() + 10
@@ -177,7 +185,8 @@ end
 -- ARCANIST
 Abilities.GravityWell = function(ctx)
 	local center = clampAim(ctx, 90) + Vector3.new(0, 3, 0)
-	local well = zonePart("GravityWell", center, Vector3.new(8, 8, 8), Color3.fromRGB(70, 200, 255), Enum.PartType.Ball, 0)
+	local well =
+		zonePart("GravityWell", center, Vector3.new(8, 8, 8), Color3.fromRGB(70, 200, 255), Enum.PartType.Ball, 0)
 	well.Material = Enum.Material.Neon
 	Debris:AddItem(well, 3.2)
 	task.spawn(function()
@@ -273,7 +282,14 @@ end
 
 Abilities.Sanctuary = function(ctx)
 	local center = ctx.root.Position
-	local zone = zonePart("Sanctuary", center - Vector3.new(0, 2.5, 0), Vector3.new(1, 40, 40), Color3.fromRGB(90, 230, 130), Enum.PartType.Cylinder, 0.3)
+	local zone = zonePart(
+		"Sanctuary",
+		center - Vector3.new(0, 2.5, 0),
+		Vector3.new(1, 40, 40),
+		Color3.fromRGB(90, 230, 130),
+		Enum.PartType.Cylinder,
+		0.3
+	)
 	zone.CFrame = CFrame.new(center - Vector3.new(0, 2.5, 0)) * CFrame.Angles(0, 0, math.rad(90))
 	Debris:AddItem(zone, 8)
 	effect("Heal", { position = center, radius = 20 })
@@ -310,7 +326,14 @@ Abilities.SentryTurret = function(ctx)
 	local base = zonePart("Base", pos, Vector3.new(3, 3, 3), Color3.fromRGB(70, 70, 80), Enum.PartType.Block, 0)
 	base.Material = Enum.Material.Metal
 	base.Parent = turret
-	local head = zonePart("Head", pos + Vector3.new(0, 2.2, 0), Vector3.new(1.6, 1.6, 1.6), Color3.fromRGB(255, 220, 70), Enum.PartType.Ball, 0)
+	local head = zonePart(
+		"Head",
+		pos + Vector3.new(0, 2.2, 0),
+		Vector3.new(1.6, 1.6, 1.6),
+		Color3.fromRGB(255, 220, 70),
+		Enum.PartType.Ball,
+		0
+	)
 	head.Material = Enum.Material.Neon
 	head.Parent = turret
 	turret.Parent = CombatService.EffectsFolder
@@ -324,7 +347,11 @@ Abilities.SentryTurret = function(ctx)
 			for _, enemy in enemiesInRadius(head.Position, 90) do
 				local d = ((enemy.PrimaryPart :: BasePart).Position - head.Position).Magnitude
 				if d < best then
-					local los = workspace:Raycast(head.Position, (enemy.PrimaryPart :: BasePart).Position - head.Position, rayParams)
+					local los = workspace:Raycast(
+						head.Position,
+						(enemy.PrimaryPart :: BasePart).Position - head.Position,
+						rayParams
+					)
 					if not los or CombatService.FindEnemyModel(los.Instance) == enemy then
 						target, best = enemy, d
 					end
@@ -343,17 +370,33 @@ end
 
 Abilities.Thrusters = function(ctx)
 	impulse(ctx.player, ctx.look * 45 + Vector3.new(0, 75, 0), 0.35)
-	effect("Explosion", { position = ctx.root.Position - Vector3.new(0, 2, 0), radius = 4, color = Color3.fromRGB(255, 150, 50) })
+	effect(
+		"Explosion",
+		{ position = ctx.root.Position - Vector3.new(0, 2, 0), radius = 4, color = Color3.fromRGB(255, 150, 50) }
+	)
 	return true
 end
 
 Abilities.OrbitalStrike = function(ctx)
 	local target = clampAim(ctx, 250)
-	local warning = zonePart("StrikeWarning", target, Vector3.new(1, 36, 36), Color3.fromRGB(255, 60, 40), Enum.PartType.Cylinder, 0.4)
+	local warning = zonePart(
+		"StrikeWarning",
+		target,
+		Vector3.new(1, 36, 36),
+		Color3.fromRGB(255, 60, 40),
+		Enum.PartType.Cylinder,
+		0.4
+	)
 	warning.CFrame = CFrame.new(target) * CFrame.Angles(0, 0, math.rad(90))
 	Debris:AddItem(warning, 1.6)
 	task.delay(1.5, function()
-		effect("Beam", { from = target + Vector3.new(0, 400, 0), to = target, color = Color3.fromRGB(255, 240, 200), width = 14, duration = 1.2 })
+		effect("Beam", {
+			from = target + Vector3.new(0, 400, 0),
+			to = target,
+			color = Color3.fromRGB(255, 240, 200),
+			width = 14,
+			duration = 1.2,
+		})
 		effect("Explosion", { position = target, radius = 22, color = Color3.fromRGB(255, 200, 120) })
 		for _, enemy in enemiesInRadius(target, 22) do
 			CombatService.DamageEnemy(enemy, 650, ctx.player)

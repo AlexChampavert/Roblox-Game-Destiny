@@ -53,7 +53,11 @@ end
 
 local function writeEntry(player: Player, missionId: string, since: number)
 	pcall(function()
-		mapFor(missionId):SetAsync(tostring(player.UserId), { userId = player.UserId, jobId = game.JobId, t = since }, ENTRY_TTL)
+		mapFor(missionId):SetAsync(
+			tostring(player.UserId),
+			{ userId = player.UserId, jobId = game.JobId, t = since },
+			ENTRY_TTL
+		)
 	end)
 end
 

@@ -48,7 +48,9 @@ src/
 - Keep files under ~500 lines; split by feature.
 
 ## FIRST TASK for Claude Code
-This code was written without a Roblox runtime and hasn't been run yet. Before adding anything:
+✅ Steps 1–4 done (PR "CI + fixes + TESTING.md"): CI runs rojo build, selene, luau-lsp and StyLua (auto-formats feature branches). Keep CI green on every PR.
+
+Original checklist:
 1. Set up the toolchain (`rokit init` with rojo, selene, stylua, luau-lsp), add `selene.toml` with `std = "roblox"`, and add a GitHub Actions workflow that runs selene + stylua --check + `rojo build`.
 2. Run `selene src` and luau-lsp analysis; fix every error and every real warning.
 3. Review each "Implemented" item below against its description and fix logic bugs. Pay special attention to the session lock (DataService), the downed/revive flow, the aim pose math (shoulder C0) and matchmaking.

@@ -130,7 +130,8 @@ function ProgressionService.GrantGear(player: Player, pinnacle: boolean, bonusPo
 	local slot = Progression.GearSlots[rng:NextInteger(1, #Progression.GearSlots)]
 	local bonusRange = if pinnacle then Progression.PinnacleDropBonus else Progression.NormalDropBonus
 	local current = DataService.GetPower(profile)
-	local power = math.min(current + rng:NextInteger(bonusRange[1], bonusRange[2]) + (bonusPower or 0), Progression.MaxPower)
+	local power =
+		math.min(current + rng:NextInteger(bonusRange[1], bonusRange[2]) + (bonusPower or 0), Progression.MaxPower)
 	local rarity = rollRarity(pinnacle)
 	if slot == "armor" and rarity == "Exotic" then
 		rarity = "Legendary" -- exotics are weapons only (for now)

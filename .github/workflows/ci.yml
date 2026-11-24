@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  lint:
+    name: Lint, typecheck and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain (aftman)
+        uses: ok-nick/setup-aftman@v0.4.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install luau-lsp
+        run: |
+          curl -sSL -o luau-lsp.zip https://github.com/JohnnyMorganz/luau-lsp/releases/latest/download/luau-lsp-linux-x86_64.zip \
+            || curl -sSL -o luau-lsp.zip https://github.com/JohnnyMorganz/luau-lsp/releases/latest/download/luau-lsp-linux.zip
+          unzip -o luau-lsp.zip -d /tmp/luau-lsp
+          chmod +x /tmp/luau-lsp/luau-lsp
+          echo "/tmp/luau-lsp" >> "$GITHUB_PATH"
+          curl -sSL -o /tmp/globalTypes.d.luau https://raw.githubusercontent.com/JohnnyMorganz/luau-lsp/main/scripts/globalTypes.d.luau
+
+      - name: Rojo build
+        id: rojo
+        continue-on-error: true
+        run: |
+          rojo build default.project.json -o build.rbxl
+          rojo sourcemap default.project.json -o sourcemap.json
+
+      - name: Selene (lint)
+        id: selene
+        continue-on-error: true
+        run: selene src
+
+      - name: luau-lsp (type check)
+        id: luau
+        continue-on-error: true
+        run: luau-lsp analyze --definitions=/tmp/globalTypes.d.luau --sourcemap=sourcemap.json --no-strict-dm-types src
+
+      - name: StyLua (format check)
+        id: stylua
+        continue-on-error: true
+        run: stylua --check src
+
+      # On feature branches, fix formatting automatically and push it back
+      - name: Auto-format (feature branches only)
+        if: steps.stylua.outcome == 'failure' && github.event_name == 'push' && github.ref != 'refs/heads/main'
+        run: |
+          stylua src
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Format with StyLua" && git push
+
+      - name: Result
+        run: |
+          echo "rojo=${{ steps.rojo.outcome }} selene=${{ steps.selene.outcome }} luau=${{ steps.luau.outcome }} stylua=${{ steps.stylua.outcome }}"
+          test "${{ steps.rojo.outcome }}" = "success"
+          test "${{ steps.selene.outcome }}" = "success"
+          test "${{ steps.luau.outcome }}" = "success"
+          # Formatting is auto-fixed on feature branches; it only fails the build on main / PRs
+          if [ "${{ github.event_name }}" != "push" ] || [ "${{ github.ref }}" = "refs/heads/main" ]; then test "${{ steps.stylua.outcome }}" = "success"; fi
