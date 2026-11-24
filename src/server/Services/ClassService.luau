@@ -10,6 +10,7 @@ local Net = require(Shared.Net)
 local DataService = require(script.Parent.DataService)
 local CombatService = require(script.Parent.CombatService)
 local Security = require(script.Parent.Security)
+local MovementService = require(script.Parent.MovementService)
 local Telemetry = require(script.Parent.Telemetry)
 
 local ClassService = {}
@@ -29,7 +30,7 @@ local function applyToCharacter(player: Player, char: Model)
 	end
 	hum.MaxHealth = class.maxHealth
 	hum.Health = class.maxHealth
-	hum.WalkSpeed = class.walkSpeed
+	MovementService.ApplySpeed(player)
 	char:SetAttribute("ClassId", class.id)
 
 	-- Class color stripe so teammates can tell classes apart (replace with armor sets later)

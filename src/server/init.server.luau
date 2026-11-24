@@ -26,6 +26,7 @@ else
 end
 
 local Security = require(Services.Security)
+local MovementService = require(Services.MovementService)
 local Telemetry = require(Services.Telemetry)
 local DataService = require(Services.DataService)
 local ProgressionService = require(Services.ProgressionService)
@@ -41,6 +42,7 @@ local MatchmakingService = require(Services.MatchmakingService)
 local LobbyService = require(Services.LobbyService)
 
 Security.Start()
+MovementService.Start()
 DataService.Start()
 CombatService.Start()
 ClassService.Start()

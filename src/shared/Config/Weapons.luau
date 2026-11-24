@@ -15,6 +15,7 @@ export type WeaponDef = {
 	automatic: boolean,
 	length: number, -- gun model length (studs)
 	recoil: number, -- camera kick (degrees per shot)
+	adsFov: number, -- camera field of view while aiming down sights (hip = 70)
 	fireSound: string?, -- e.g. "rbxassetid://123" — set when you have audio
 }
 
@@ -31,6 +32,7 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 1,
 		headshotMult = 1.6,
 		length = 3.2,
+		adsFov = 55,
 		recoil = 0.6,
 		automatic = true,
 	},
@@ -46,6 +48,7 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 1,
 		headshotMult = 2.0,
 		length = 1.7,
+		adsFov = 58,
 		recoil = 2.2,
 		automatic = false,
 	},
@@ -61,6 +64,7 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 1,
 		headshotMult = 1.8,
 		length = 3.8,
+		adsFov = 42,
 		recoil = 1.2,
 		automatic = false,
 	},
@@ -76,6 +80,7 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 1,
 		headshotMult = 1.4,
 		length = 2.2,
+		adsFov = 62,
 		recoil = 0.4,
 		automatic = true,
 	},
@@ -91,6 +96,7 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 8,
 		headshotMult = 1.3,
 		length = 3.4,
+		adsFov = 64,
 		recoil = 4.0,
 		automatic = false,
 	},
@@ -106,6 +112,7 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 1,
 		headshotMult = 2.5,
 		length = 4.8,
+		adsFov = 20,
 		recoil = 5.0,
 		automatic = false,
 	},

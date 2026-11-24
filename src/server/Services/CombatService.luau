@@ -15,6 +15,7 @@ local Net = require(Shared.Net)
 local DataService = require(script.Parent.DataService)
 local ProgressionService = require(script.Parent.ProgressionService)
 local Security = require(script.Parent.Security)
+local MovementService = require(script.Parent.MovementService)
 
 local CombatService = {}
 
@@ -382,12 +383,10 @@ function CombatService.Revive(player: Player, reviver: Player?)
 	if prompt then
 		prompt:Destroy()
 	end
-	local classId = player:GetAttribute("ClassId")
-	local class = classId and Classes.Defs[classId]
-	hum.WalkSpeed = if class then class.walkSpeed else 16
 	hum.JumpHeight = 7.2
 	hum.JumpPower = 50
 	hum.Health = hum.MaxHealth * Progression.ReviveHealth
+	MovementService.ApplySpeed(player)
 	lastDamaged[player] = now()
 	Security.AllowMovement(player, 1)
 	if reviver then
@@ -505,6 +504,13 @@ local function onFire(player: Player, aimPoint: any)
 		return
 	end
 
+	-- Shooting cancels sprint; aiming down sights tightens spread
+	local stance = player:GetAttribute("Stance")
+	if stance == "sprint" then
+		MovementService.SetStance(player, "none")
+	end
+	local spreadMult = if stance == "ads" then 0.3 else 1
+
 	st.lastFire = t
 	st.ammo[slot] -= 1
 	player:SetAttribute("Ammo", st.ammo[slot])
@@ -535,7 +541,7 @@ local function onFire(player: Player, aimPoint: any)
 	local tracerColor = if empowered then Color3.fromRGB(200, 120, 255) else Color3.fromRGB(255, 230, 150)
 
 	for _ = 1, w.pellets do
-		local dir = spreadDirection(baseDir, w.spread)
+		local dir = spreadDirection(baseDir, w.spread * spreadMult)
 		local result = workspace:Raycast(origin, dir * w.range, params)
 		local hitPos = if result then result.Position else origin + dir * w.range
 		if result then
