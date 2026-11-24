@@ -17,6 +17,9 @@ local EVENTS = {
 	"Matchmaking", -- ("Join", missionId) | ("Cancel")
 	"Inventory", -- ("Equip" | "Dismantle", itemUid)
 	"Vendor", -- ("BuyEngram" | "BuyArmorStyle")
+	"SetStance", -- ("none" | "sprint" | "ads")
+	"Slide", -- ()
+	"Mantle", -- ()
 	-- server -> client
 	"Notify", -- (text, kind)
 	"ObjectiveUpdate", -- ({ mission, text, progress })
