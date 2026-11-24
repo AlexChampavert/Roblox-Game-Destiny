@@ -260,30 +260,6 @@ local function build()
 	end
 	refs.hitmarker = hm
 
-	-- Finisher available? (weakened non-boss enemy right in front)
-	refs.finisher.Visible = false
-	local root = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
-	if root and workspace:GetAttribute("Mode") == "Mission" then
-		for _, enemy in CollectionService:GetTagged("Enemy") do
-			local eh = enemy:FindFirstChildOfClass("Humanoid")
-			local ep = enemy.PrimaryPart
-			if
-				eh
-				and ep
-				and eh.Health > 0
-				and not enemy:GetAttribute("IsBoss")
-				and eh.Health / eh.MaxHealth <= 0.15
-			then
-				local to = ep.Position - root.Position
-				local flat = Vector3.new(to.X, 0, to.Z)
-				if flat.Magnitude <= 8 and (flat.Magnitude < 2 or flat.Unit:Dot(root.CFrame.LookVector) >= 0.5) then
-					refs.finisher.Visible = true
-					break
-				end
-			end
-		end
-	end
-
 	-- Downed overlay
 	local downed = UI.new("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0),
@@ -423,6 +399,24 @@ local function update()
 	refs.ammo.Text = if reloading
 		then "RELOADING"
 		else ("%d / %d"):format(player:GetAttribute("Ammo") or 0, player:GetAttribute("MagSize") or 0)
+
+	-- Finisher available? (weakened non-boss enemy right in front)
+	refs.finisher.Visible = false
+	local root = char and char:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if root and workspace:GetAttribute("Mode") == "Mission" then
+		for _, enemy in CollectionService:GetTagged("Enemy") do
+			local eh = enemy:FindFirstChildOfClass("Humanoid")
+			local ep = enemy.PrimaryPart
+			if eh and ep and eh.Health > 0 and not enemy:GetAttribute("IsBoss") and eh.Health / eh.MaxHealth <= 0.15 then
+				local to = ep.Position - root.Position
+				local flat = Vector3.new(to.X, 0, to.Z)
+				if flat.Magnitude <= 8 and (flat.Magnitude < 2 or flat.Unit:Dot(root.CFrame.LookVector) >= 0.5) then
+					refs.finisher.Visible = true
+					break
+				end
+			end
+		end
+	end
 
 	-- Downed
 	local downedUntil = char and char:GetAttribute("Downed") and char:GetAttribute("DownedUntil")

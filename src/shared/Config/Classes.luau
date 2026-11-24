@@ -92,6 +92,18 @@ local Classes: { [string]: ClassDef } = {
 			},
 			E = { id = "ShadowDash", name = "Shadow Dash", description = "A long, fast dash.", cooldown = 5 },
 			F = { id = "Deadeye", name = "Deadeye", description = "Your next 3 shots deal 5x damage.", cooldown = 0 },
+			G = {
+				id = "ArcboltGrenade",
+				name = "Arcbolt Grenade",
+				description = "Lightning chains between up to 4 nearby enemies.",
+				cooldown = 12,
+			},
+			V = {
+				id = "KnifeThrow",
+				name = "Knife Throw",
+				description = "Throw a knife up to 45 studs. Headshots hurt.",
+				cooldown = 5,
+			},
 		},
 		startingWeapons = { primary = "HandCannon", secondary = "SMG" },
 		hall = {
@@ -116,18 +128,6 @@ local Classes: { [string]: ClassDef } = {
 				name = "Gravity Well",
 				description = "A singularity that pulls in and damages enemies.",
 				cooldown = 12,
-			},
-			G = {
-				id = "ArcboltGrenade",
-				name = "Arcbolt Grenade",
-				description = "Lightning chains between up to 4 nearby enemies.",
-				cooldown = 12,
-			},
-			V = {
-				id = "KnifeThrow",
-				name = "Knife Throw",
-				description = "Throw a knife up to 45 studs. Headshots hurt.",
-				cooldown = 5,
 			},
 			E = { id = "Blink", name = "Blink", description = "Teleport 35 studs forward.", cooldown = 6 },
 			F = {
