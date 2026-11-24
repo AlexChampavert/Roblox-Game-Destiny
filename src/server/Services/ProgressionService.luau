@@ -67,6 +67,8 @@ end
 
 -- ===== Loot =====
 
+local ELEMENT_IDS = { "Ember", "Volt", "Null" }
+
 -- Loot pools: normal weapons for primary/secondary, heavy weapons for the heavy slot
 local weaponIds, heavyIds = {}, {}
 for id, def in Weapons do
@@ -149,6 +151,11 @@ function ProgressionService.GrantGear(player: Player, pinnacle: boolean, bonusPo
 		power = power,
 		rarity = rarity,
 		perks = if slot ~= "armor" then rollPerks(rarity) else {},
+		-- Elements: Common weapons are kinetic, Rare 50% elemental, Legendary/Exotic always elemental
+		element = if slot ~= "armor"
+				and (rarity == "Legendary" or rarity == "Exotic" or (rarity == "Rare" and rng:NextNumber() < 0.5))
+			then ELEMENT_IDS[rng:NextInteger(1, #ELEMENT_IDS)]
+			else nil,
 	}
 
 	local equipped = false
@@ -170,6 +177,7 @@ function ProgressionService.GrantGear(player: Player, pinnacle: boolean, bonusPo
 		rarity = rarity,
 		perks = item.perks,
 		weaponName = if item.weaponId then Weapons[item.weaponId].name else "Armor",
+		element = item.element,
 		pinnacle = pinnacle,
 		equipped = equipped,
 	})

@@ -14,9 +14,15 @@ A co-op sci-fi looter-shooter for Roblox: 5 classes, a class hall for each one, 
 ## Controls
 | | PC | Gamepad | Mobile |
 |---|---|---|---|
-| Fire | Left click | RT | FIRE button |
+| Fire | Left click | RT | FIRE button (or AUTO fire) |
+| Aim down sights | Right click (hold) | LT (hold) | AIM button |
+| Sprint | Shift (hold) | L3 | RUN button |
+| Slide (while sprinting) | C or Ctrl | R3 | SLIDE button |
+| Mantle (climb a ledge) | Space in the air, facing the ledge | A in the air | Jump |
 | Ability 1 / 2 | Q / E | LB / RB | Q / E buttons |
+| Grenade | G | D-pad up | GREN button |
+| Melee / finisher | V | D-pad right | MELEE button |
 | Super | F | B | SUPER button |
 | Reload | R | X | R button |
-| Switch weapon | 1 / 2 | Y | SWAP button |
+| Weapons (primary / secondary / heavy) | 1 / 2 / 3 | Y (cycle) | SWAP button |
 | Fireteam | Tab | | Top-right button |

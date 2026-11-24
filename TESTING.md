@@ -78,6 +78,24 @@ Press **Play** (F5).
 | 4.6 | Lifebinder test: switch Player 1 to Lifebinder in the hub. In a mission, let Player 2 go down and use **F (Sanctuary)** next to them | Instant revive. |
 | 4.7 | Both players get downed | Wipe, then a restart from the checkpoint. |
 
+## 6. Combat systems (backlog A)
+
+| # | Do this | ✅ Expected |
+|---|---|---|
+| 6.1 | In a mission, hold **right click** | The camera zooms in (a lot with a sniper, a little with an SMG), you walk slower, and shots group much tighter. Mouse sensitivity drops so aiming feels the same. |
+| 6.2 | Hold **Shift** while moving | You run faster and the view widens slightly. Shooting stops the sprint. |
+| 6.3 | Sprint and press **C** | You slide forward and the camera drops low. |
+| 6.4 | Jump at a waist-to-head-high block of cover and press **Space** again in the air | You climb on top of it (mantle). |
+| 6.5 | Press **G** | A grenade arcs out and explodes. Each class's grenade looks and acts differently (Phantom's chains lightning, Lifebinder's heals). |
+| 6.6 | Press **V** next to an enemy | Class melee: Bulwark lunges, Phantom throws a knife, Engineer stuns. |
+| 6.7 | Shoot a Husk down to a sliver of health, walk up to it | **FINISH [V]** appears. Press V: the enemy dies with a beam and your super meter jumps. |
+| 6.8 | Press **3** | You switch to the Rocket Launcher. The ammo counter turns purple and shows the reserve (e.g. "1 / 1 · 2"). |
+| 6.9 | Fire a rocket at a group | A glowing rocket flies and explodes on impact, damaging everything nearby. |
+| 6.10 | Kill enemies until a green or purple cube drops, then walk over it | "+Special ammo" / "+Heavy ammo", and the reserve number goes up. |
+| 6.11 | Shoot a **Hollow Seer** (purple) | A purple shield bar sits over its health. Kinetic shots barely dent it. A Null weapon or Arcanist abilities melt it. Breaking it makes a burst and "Shield broken!". |
+| 6.12 | Fight **Gravemaw** | About every 12s a yellow glowing core appears on its chest with "weak point exposed!". Hitting it deals gold numbers and big damage. |
+| 6.13 | Plug in a **gamepad** and aim near an enemy | Shots snap onto enemies that are slightly off the crosshair (aim assist). With the mouse there's no snapping. |
+
 ## 5. Things that only work in a published game (not Studio)
 
 - **Teleporting to a real mission server** (Studio runs missions in the same server instead).

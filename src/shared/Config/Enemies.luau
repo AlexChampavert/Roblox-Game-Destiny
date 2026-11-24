@@ -30,6 +30,10 @@ export type EnemyDef = {
 	projectile: { speed: number, size: number }?,
 	-- Telegraphed special attack: a warning circle appears under the target, then explodes
 	special: { every: number, radius: number, damage: number, windup: number }?,
+	-- Elemental shield: absorbs damage first. Matching element deals 3x to it, others 0.5x.
+	shield: { element: string, amount: number }?,
+	-- Boss weak point: a glowing crit spot exposed for `duration` s every `every` s
+	weakPoint: { every: number, duration: number, mult: number }?,
 }
 
 -- Typed helper so each phase literal is checked on its own (Luau can't unify mixed literal shapes in an array)
@@ -72,6 +76,7 @@ local Enemies: { [string]: EnemyDef } = {
 	},
 	Brute = {
 		id = "Brute",
+		shield = { element = "Volt", amount = 120 },
 		name = "Brute",
 		faction = "Hollow",
 		health = 320,
@@ -87,6 +92,7 @@ local Enemies: { [string]: EnemyDef } = {
 	},
 	Seer = {
 		id = "Seer",
+		shield = { element = "Null", amount = 100 },
 		name = "Hollow Seer",
 		faction = "Hollow",
 		projectile = { speed = 70, size = 1.8 },
@@ -120,6 +126,7 @@ local Enemies: { [string]: EnemyDef } = {
 	},
 	Shieldbearer = {
 		id = "Shieldbearer",
+		shield = { element = "Ember", amount = 220 },
 		name = "Shieldbearer",
 		faction = "Regime",
 		health = 380,
@@ -152,6 +159,8 @@ local Enemies: { [string]: EnemyDef } = {
 	-- BOSSES
 	Gravemaw = {
 		id = "Gravemaw",
+		shield = { element = "Ember", amount = 500 },
+		weakPoint = { every = 12, duration = 5, mult = 3 },
 		name = "Gravemaw, Brute Alpha",
 		faction = "Hollow",
 		isBoss = true,
@@ -172,6 +181,8 @@ local Enemies: { [string]: EnemyDef } = {
 	},
 	RelayWarden = {
 		id = "RelayWarden",
+		shield = { element = "Volt", amount = 700 },
+		weakPoint = { every = 11, duration = 5, mult = 3 },
 		name = "Relay Warden",
 		faction = "Hollow",
 		isBoss = true,
@@ -198,6 +209,8 @@ local Enemies: { [string]: EnemyDef } = {
 	},
 	Matriarch = {
 		id = "Matriarch",
+		shield = { element = "Null", amount = 900 },
+		weakPoint = { every = 12, duration = 5, mult = 3 },
 		name = "The Matriarch",
 		faction = "Hollow",
 		isBoss = true,
@@ -225,6 +238,8 @@ local Enemies: { [string]: EnemyDef } = {
 	},
 	VexRourke = {
 		id = "VexRourke",
+		shield = { element = "Ember", amount = 1000 },
+		weakPoint = { every = 10, duration = 4, mult = 3 },
 		name = "Commander Vex Rourke",
 		faction = "Regime",
 		isBoss = true,
@@ -251,6 +266,8 @@ local Enemies: { [string]: EnemyDef } = {
 	},
 	Unmaker = {
 		id = "Unmaker",
+		shield = { element = "Null", amount = 1600 },
+		weakPoint = { every = 10, duration = 5, mult = 3.5 },
 		name = "The Unmaker",
 		faction = "Hollow",
 		isBoss = true,

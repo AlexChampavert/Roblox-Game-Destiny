@@ -394,7 +394,9 @@ local function update()
 	local reloading = player:GetAttribute("Reloading")
 	local rarity = Loot.Rarities[player:GetAttribute("WeaponRarity") or "Common"]
 	refs.weapon.TextColor3 = if rarity then rarity.color else C.dim
-	refs.weapon.Text = (player:GetAttribute("WeaponName") or "")
+	local weaponElement = player:GetAttribute("WeaponElement")
+	refs.weapon.Text = (if weaponElement then "◈ " .. weaponElement .. " " else "")
+		.. (player:GetAttribute("WeaponName") or "")
 		.. (if (player:GetAttribute("EmpoweredShots") or 0) > 0 then "  ✦ DEADEYE" else "")
 	refs.ammo.Text = if reloading
 		then "RELOADING"
@@ -492,7 +494,7 @@ function HUD.Start()
 			("%s%s %s  ⚡%d  %s"):format(
 				tag,
 				item.rarity,
-				item.weaponName,
+				(if item.element then item.element .. " " else "") .. item.weaponName,
 				item.power,
 				if item.equipped then "(equipped)" else "(in inventory)"
 			),

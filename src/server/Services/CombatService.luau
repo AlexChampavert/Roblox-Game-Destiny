@@ -8,6 +8,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Weapons = require(Shared.Config.Weapons)
+local Elements = require(Shared.Config.Elements)
 local Classes = require(Shared.Config.Classes)
 local Progression = require(Shared.Config.Progression)
 local Net = require(Shared.Net)
@@ -202,6 +203,7 @@ local function syncWeapon(player: Player)
 	player:SetAttribute("WeaponId", weaponId)
 	player:SetAttribute("WeaponName", Weapons[weaponId].name)
 	player:SetAttribute("WeaponRarity", if item then item.rarity else "Common")
+	player:SetAttribute("WeaponElement", if item then item.element else nil)
 	player:SetAttribute("Ammo", st.ammo[st.slot])
 	local ammoType = Weapons[weaponId].ammoType
 	player:SetAttribute("AmmoType", ammoType)
@@ -412,14 +414,59 @@ function CombatService.DamageEnemy(
 		if model:GetAttribute("IsBoss") then
 			CombatService.AddSuper(attacker, amount / hum.MaxHealth * Progression.SuperChargePerBossDamagePct)
 		end
+	end
+
+	-- Elemental shield absorbs damage first: matching element x3, anything else x0.5
+	local shield = tonumber(model:GetAttribute("Shield")) or 0
+	local onShield = false
+	if shield > 0 then
+		onShield = true
+		local shieldElement = model:GetAttribute("ShieldElement")
+		local factor = if element ~= nil and element == shieldElement then 3 else 0.5
+		local shieldDamage = amount * factor
+		if shieldDamage < shield then
+			model:SetAttribute("Shield", shield - shieldDamage)
+			amount = 0
+		else
+			model:SetAttribute("Shield", 0)
+			amount = (shieldDamage - shield) / factor -- leftover goes through to health
+			CombatService.BreakShield(model, shieldElement, attacker)
+		end
+		amount = math.max(amount, 0)
+		shield = shieldDamage -- for the damage number below
+	end
+
+	if attacker then
 		local head = model:FindFirstChild("Head") :: BasePart?
 		Net.event("Effect"):FireClient(attacker, "Damage", {
 			position = if head then head.Position else model:GetPivot().Position,
-			amount = math.floor(amount + 0.5),
+			amount = math.floor((if onShield then shield else amount) + 0.5),
 			headshot = headshot == true,
+			shield = onShield,
 		})
 	end
-	hum:TakeDamage(amount)
+	if amount > 0 then
+		hum:TakeDamage(amount)
+	end
+end
+
+-- Shield break: elemental burst that damages enemies around it
+function CombatService.BreakShield(model: Model, element: string?, attacker: Player?)
+	local pos = model:GetPivot().Position
+	local def = element and Elements[element]
+	Net.event("Effect"):FireAllClients(
+		"Explosion",
+		{ position = pos, radius = 10, color = if def then def.color else Color3.new(1, 1, 1) }
+	)
+	if attacker then
+		Net.event("Notify"):FireClient(attacker, "Shield broken!", "super")
+	end
+	for _, other in CollectionService:GetTagged("Enemy") do
+		local part = other.PrimaryPart
+		if other ~= model and part and (part.Position - pos).Magnitude <= 10 then
+			task.defer(CombatService.DamageEnemy, other, 40, attacker, nil, element)
+		end
+	end
 end
 
 -- ===== Downed / revive =====
@@ -649,8 +696,9 @@ local function onFire(player: Player, aimPoint: any)
 		if result then
 			local model = CombatService.FindEnemyModel(result.Instance)
 			if model then
-				local headshot = result.Instance.Name == "Head"
-				local damage = w.damage * mult
+				local critMult = tonumber(result.Instance:GetAttribute("CritMult")) -- boss weak point
+				local headshot = result.Instance.Name == "Head" or critMult ~= nil
+				local damage = w.damage * mult * (critMult or 1)
 				if headshot then
 					damage *= w.headshotMult + (if headseeker then 0.3 else 0)
 					if classId == "Phantom" then

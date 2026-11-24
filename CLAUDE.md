@@ -12,23 +12,24 @@ This file says how the code is built and what to do next.
 src/
   shared/            -> ReplicatedStorage.Shared
     Net.luau         all RemoteEvents/RemoteFunctions (created by server, found by client)
-    Config/          PURE DATA: Classes, Weapons, Enemies, Missions, Progression, Story, Loot, Bounties
+    Config/          PURE DATA: Classes, Weapons, Enemies, Missions, Progression, Story, Loot, Bounties, Elements
   server/            -> ServerScriptService.Server
     init.server.luau bootstrap: detects HUB vs MISSION mode, starts services
-    Services/        Security, Telemetry, DataService, ProgressionService, CombatService,
-                     ClassService, AbilityService, EnemyService, StoryService, BountyService,
-                     MissionService, MatchmakingService, LoadoutService, LobbyService
+    Services/        Security, Telemetry, MovementService, Ordnance, DataService, ProgressionService,
+                     CombatService, ClassService, AbilityService/ (init, Kit, Grenades, Melee),
+                     EnemyService, StoryService, BountyService, MissionService,
+                     MatchmakingService, LoadoutService, LobbyService
     World/           Build helper, HubBuilder (the Meridian + class halls), MissionBuilder
   client/            -> StarterPlayerScripts.Client
     init.client.luau
-    Controllers/     Effects, UI, HUD, Menus, Combat (camera + input)
+    Controllers/     Effects, UI, HUD, Menus, Combat (camera + input + movement), AimPose
 ```
 
 ## Architecture rules (keep these)
 1. **One place, two modes.** Public server = HUB. Reserved server (`PrivateServerId ~= ""` and `PrivateServerOwnerId == 0`) = MISSION, and the mission id comes from the teleport data. `workspace:GetAttribute("Mode")` is `"Hub"` or `"Mission"`.
 2. **Server-authoritative.** Clients only send intent (`Fire(aimPoint)`, `UseAbility(slot, aimPoint)`). The server checks fire rate, ammo, cooldowns, super charge and line of sight, and applies all damage, XP and loot. Never trust a number sent by a client.
 3. **Data-driven content.** New class / weapon / enemy / mission / story week = a new entry in `shared/Config`. Logic should never hard-code content ids, except ability implementations in `AbilityService.Abilities[abilityId]`.
-4. **Replication through attributes.** Player HUD state lives in Player attributes (`Level`, `XP`, `XPNext`, `Power`, `Shards`, `ClassId`, `WeaponId`, `Ammo`, `MagSize`, `Reloading`, `ReadyQ`, `ReadyE`, `SuperCharge`, `EmpoweredShots`). Timestamps use `workspace:GetServerTimeNow()`.
+4. **Replication through attributes.** Player HUD state lives in Player attributes (`Level`, `XP`, `XPNext`, `Power`, `Shards`, `ClassId`, `WeaponId`, `WeaponElement`, `Ammo`, `MagSize`, `AmmoType`, `Reserve`, `Reloading`, `ReadyQ`/`E`/`G`/`V`, `SuperCharge`, `EmpoweredShots`, `Stance`). Enemy state too (`Shield`, `ShieldMax`, `ShieldElement`, `StunnedUntil`). Timestamps use `workspace:GetServerTimeNow()`.
 5. **Procedural maps are placeholders.** `HubBuilder` / `MissionBuilder` first look for hand-built maps in `ServerStorage.Maps` (`Hub`, `<missionId>`); the naming conventions are documented at the top of each builder. Real maps get built in Studio and replace the generated ones one at a time.
 6. **Enemy models:** `ServerStorage.EnemyModels.<enemyId>` overrides the blocky placeholder. It needs a `Humanoid`, `HumanoidRootPart` and `Head`.
 7. **Class halls** are generated from `Classes.Order` + each class's `hall` field, in `HALL_SLOTS` along the truss arms. A new class gets a hall automatically; add a slot if more than 10 classes ever exist.
@@ -43,6 +44,9 @@ src/
 - Each service exports `Start()` (or `Init()`) and is started from `init.server.luau`. No circular requires: Security/Telemetry → Data → Progression → Combat → Class/Ability/Enemy → Story/Bounty → Mission → Matchmaking/Loadout → Lobby. Where a lower service needs something from a higher one, inject a function (see `MatchmakingService.LockReason`).
 - Wrap every RemoteEvent handler in `Security.Guard(name, perSecond, handler)`.
 - Anything that moves a player fast on the server (teleports, dashes) must call `Security.AllowMovement(player, seconds)` first, or the movement check will rubber-band them.
+- `MovementService.ApplySpeed` is the only place that sets a player's `WalkSpeed` (class base × stance). Downed players are the exception.
+- Damage to enemies always goes through `CombatService.DamageEnemy(model, amount, attacker, headshot, element)`: it applies power scaling, Order Rank bonuses and elemental shields.
+- The project ships Claude Code skills in `.claude/skills/` (roblox-luau, roblox-networking, roblox-physics, roblox-characters, roblox-datastores, fps-shooter, game-feel, game-ai…). Read the matching skill before working on that area.
 - Wrap remote handlers in type checks (`typeof(x) == "Vector3"`) before using arguments.
 - No `wait()`/`spawn()`/`delay()`: use `task.*`.
 - Keep files under ~500 lines; split by feature.
@@ -71,17 +75,17 @@ Original checklist:
 
 ## 50-idea backlog (priority order: top = do first)
 
-### A. Combat feel and gameplay
-1. **Aim down sights** (right click / L2): zoom per weapon, tighter spread, slower movement.
-2. **Sprint, slide and mantle** (climb ledges): movement is half the fun.
-3. **Melee attack** (V): class-specific melee (Bulwark shoulder charge, Phantom knife throw...).
-4. **Grenades as their own slot**: each class gets a grenade (G), so there are 3 abilities plus a super.
-5. **Heavy weapons** (rocket launcher, machine gun) with rare heavy ammo drops.
-6. **Ammo economy**: enemies drop ammo bricks, and special ammo for snipers and shotguns.
-7. **Elements** (Ember / Volt / Null): elemental enemy shields that take bonus damage from the matching element.
-8. **Weak points**: boss crit spots that open during certain phases.
-9. **Finishers**: press a key on a low-health enemy for a class animation and an orb drop.
-10. **Gamepad and mobile aim assist**, plus an optional mobile auto-fire.
+### A. Combat feel and gameplay ✅ all done (PRs #4–#7)
+1. ✅ **Aim down sights** (right click / L2): zoom per weapon, tighter spread, slower movement.
+2. ✅ **Sprint, slide and mantle** (climb ledges): movement is half the fun.
+3. ✅ **Melee attack** (V): class-specific melee (Bulwark shoulder charge, Phantom knife throw...).
+4. ✅ **Grenades as their own slot**: each class gets a grenade (G), so there are 3 abilities plus a super.
+5. ✅ **Heavy weapons** (rocket launcher, machine gun) with rare heavy ammo drops.
+6. ✅ **Ammo economy**: enemies drop ammo bricks, and special ammo for snipers and shotguns.
+7. ✅ **Elements** (Ember / Volt / Null): elemental enemy shields that take bonus damage from the matching element.
+8. ✅ **Weak points**: boss crit spots that open during certain phases.
+9. ✅ **Finishers**: press a key on a low-health enemy for a class animation and an orb drop.
+10. ✅ **Gamepad and mobile aim assist**, plus an optional mobile auto-fire.
 
 ### B. Content
 11. **Strikes playlist**: replay missions with random modifiers and matchmaking.
