@@ -311,7 +311,8 @@ function CombatService.AddReserve(player: Player, ammoType: string): boolean
 	end
 	st.reserve[ammoType] = math.min(max, current + mag)
 	syncWeapon(player)
-	Net.event("Notify"):FireClient(player, ("+%s ammo"):format(if ammoType == "heavy" then "Heavy" else "Special"), "loot")
+	Net.event("Notify")
+		:FireClient(player, ("+%s ammo"):format(if ammoType == "heavy" then "Heavy" else "Special"), "loot")
 	return true
 end
 
@@ -626,7 +627,8 @@ local function onFire(player: Player, aimPoint: any)
 		-- Rocket: a real projectile that explodes on impact
 		local radius = w.projectile.radius
 		Ordnance.FireRocket(muzzle, baseDir, w.projectile.speed, params, function(at)
-			Net.event("Effect"):FireAllClients("Explosion", { position = at, radius = radius, color = Color3.fromRGB(255, 160, 60) })
+			Net.event("Effect")
+				:FireAllClients("Explosion", { position = at, radius = radius, color = Color3.fromRGB(255, 160, 60) })
 			for _, enemy in CollectionService:GetTagged("Enemy") do
 				local part = enemy.PrimaryPart
 				if part and (part.Position - at).Magnitude <= radius then

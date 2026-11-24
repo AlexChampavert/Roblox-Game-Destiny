@@ -142,7 +142,8 @@ function ProgressionService.GrantGear(player: Player, pinnacle: boolean, bonusPo
 	local item = {
 		uid = DataService.NewUid(profile),
 		slot = slot,
-		weaponId = if slot == "armor" then nil
+		weaponId = if slot == "armor"
+			then nil
 			elseif slot == "heavy" then heavyIds[rng:NextInteger(1, #heavyIds)]
 			else weaponIds[rng:NextInteger(1, #weaponIds)],
 		power = power,

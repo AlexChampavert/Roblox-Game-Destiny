@@ -27,7 +27,13 @@ local AMMO_COLORS = {
 	heavy = Color3.fromRGB(190, 90, 255),
 }
 
-function Ordnance.FireRocket(origin: Vector3, direction: Vector3, speed: number, params: RaycastParams, onImpact: (Vector3) -> ())
+function Ordnance.FireRocket(
+	origin: Vector3,
+	direction: Vector3,
+	speed: number,
+	params: RaycastParams,
+	onImpact: (Vector3) -> ()
+)
 	local part = Instance.new("Part")
 	part.Name = "Rocket"
 	part.Size = Vector3.new(0.6, 0.6, 2.2)

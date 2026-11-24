@@ -404,7 +404,8 @@ local function update()
 		refs.ammo.Text ..= ("  ·  %d"):format(reserve)
 	end
 	local ammoType = player:GetAttribute("AmmoType")
-	refs.ammo.TextColor3 = if ammoType == "heavy" then Color3.fromRGB(190, 90, 255)
+	refs.ammo.TextColor3 = if ammoType == "heavy"
+		then Color3.fromRGB(190, 90, 255)
 		elseif ammoType == "special" then Color3.fromRGB(90, 255, 120)
 		else C.text
 
