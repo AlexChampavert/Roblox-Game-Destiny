@@ -1,0 +1,5 @@
+std = "roblox"
+
+[lints]
+# Config tables are long and data-heavy; these are noise for this codebase
+shadowing = "allow"
