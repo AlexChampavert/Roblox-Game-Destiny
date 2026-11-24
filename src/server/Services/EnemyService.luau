@@ -11,6 +11,7 @@ local RunService = game:GetService("RunService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Enemies = require(Shared.Config.Enemies)
+local Elements = require(Shared.Config.Elements)
 local Progression = require(Shared.Config.Progression)
 local Net = require(Shared.Net)
 
@@ -44,6 +45,9 @@ type Brain = {
 	pathIndex: number,
 	nextPathAt: number,
 	computing: boolean?,
+	weakPoint: BasePart?,
+	nextExpose: number,
+	exposedUntil: number,
 }
 
 local brains: { [Model]: Brain } = {}
@@ -153,6 +157,50 @@ local function addHealthBar(def, head: BasePart, hum: Humanoid)
 	hum.HealthChanged:Connect(function(h)
 		fill.Size = UDim2.new(math.clamp(h / hum.MaxHealth, 0, 1), 0, 1, 0)
 	end)
+
+	-- Elemental shield bar (on top of the health bar), colored by element
+	if def.shield then
+		local element = Elements[def.shield.element]
+		local shieldFill = Instance.new("Frame")
+		shieldFill.Name = "Shield"
+		shieldFill.Size = UDim2.new(1, 0, 1, 0)
+		shieldFill.BackgroundColor3 = if element then element.color else Color3.new(1, 1, 1)
+		shieldFill.BorderSizePixel = 0
+		shieldFill.ZIndex = 2
+		shieldFill.Parent = back
+		local model = head:FindFirstAncestorOfClass("Model") :: Model
+		model:GetAttributeChangedSignal("Shield"):Connect(function()
+			local max = tonumber(model:GetAttribute("ShieldMax")) or 1
+			local cur = tonumber(model:GetAttribute("Shield")) or 0
+			shieldFill.Size = UDim2.new(math.clamp(cur / max, 0, 1), 0, 1, 0)
+		end)
+	end
+end
+
+-- Boss weak point: a glowing crit spot on the chest, exposed on a timer
+local function addWeakPoint(model: Model, def, root: BasePart): BasePart
+	local existing = model:FindFirstChild("WeakPoint", true) :: BasePart?
+	if existing then
+		return existing
+	end
+	local s = def.size
+	local wp = Instance.new("Part")
+	wp.Name = "WeakPoint"
+	wp.Shape = Enum.PartType.Ball
+	wp.Size = Vector3.new(1.3, 1.3, 1.3) * s
+	wp.Material = Enum.Material.Neon
+	wp.Color = Color3.fromRGB(255, 240, 120)
+	wp.CanCollide = false
+	wp.Massless = true
+	wp.Transparency = 1
+	wp.CanQuery = false
+	wp.CFrame = root.CFrame * CFrame.new(0, 0.4 * s, -0.75 * s)
+	local w = Instance.new("WeldConstraint")
+	w.Part0 = root
+	w.Part1 = wp
+	w.Parent = wp
+	wp.Parent = model
+	return wp
 end
 
 function EnemyService.Spawn(
@@ -186,11 +234,21 @@ function EnemyService.Spawn(
 
 	model:SetAttribute("EnemyId", enemyId)
 	model:SetAttribute("IsBoss", def.isBoss == true)
+	if def.shield then
+		local amount = def.shield.amount * (options.healthMult or 1)
+		model:SetAttribute("ShieldElement", def.shield.element)
+		model:SetAttribute("ShieldMax", amount)
+		model:SetAttribute("Shield", amount)
+	end
 	CollectionService:AddTag(model, "Enemy")
 	model:PivotTo(CFrame.new(position + Vector3.new(0, 3 * def.size + 2, 0)))
 	model.Parent = enemyFolder
 	root:SetNetworkOwner(nil) -- server simulates enemies
 	addHealthBar(def, head, hum)
+	local weakPoint = if def.weakPoint then addWeakPoint(model, def, root) else nil
+	if weakPoint then
+		weakPoint:SetAttribute("CritMult", def.weakPoint.mult)
+	end
 
 	brains[model] = {
 		model = model,
@@ -208,6 +266,9 @@ function EnemyService.Spawn(
 		pathIndex = 1,
 		nextPathAt = 0,
 		nextPhase = 1,
+		weakPoint = weakPoint,
+		nextExpose = os.clock() + (if def.weakPoint then def.weakPoint.every else 0),
+		exposedUntil = 0,
 	}
 
 	hum.Died:Connect(function()
@@ -541,6 +602,22 @@ local function think(brain: Brain, dt: number)
 	end
 	if brain.def.isBoss then
 		checkPhases(brain)
+	end
+	-- Weak point exposure cycle
+	local wp = brain.weakPoint
+	if wp then
+		local clock = os.clock()
+		local exposed = clock < brain.exposedUntil
+		if not exposed and clock >= brain.nextExpose then
+			brain.exposedUntil = clock + brain.def.weakPoint.duration
+			brain.nextExpose = clock + brain.def.weakPoint.every
+			wp.Transparency = 0
+			wp.CanQuery = true
+			Net.event("Notify"):FireAllClients(brain.def.name .. ": weak point exposed! Aim for the glowing core.", "boss")
+		elseif exposed == false and wp.CanQuery then
+			wp.Transparency = 1
+			wp.CanQuery = false
+		end
 	end
 	local pos = brain.root.Position
 	if (tonumber(brain.model:GetAttribute("StunnedUntil")) or 0) > workspace:GetServerTimeNow() then
