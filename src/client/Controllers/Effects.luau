@@ -93,7 +93,11 @@ local function explosion(data)
 	p.Transparency = 0.2
 	p.Parent = folder
 	local d = (data.radius or 5) * 2
-	TweenService:Create(p, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = Vector3.new(d, d, d), Transparency = 1 }):Play()
+	TweenService:Create(
+		p,
+		TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+		{ Size = Vector3.new(d, d, d), Transparency = 1 }
+	):Play()
 	Debris:AddItem(p, 0.4)
 end
 
@@ -106,7 +110,9 @@ local function beam(data)
 	p.CFrame = CFrame.lookAt(from, to) * CFrame.new(0, 0, -length / 2) * CFrame.Angles(0, math.rad(90), 0)
 	p.Color = data.color or Color3.new(1, 1, 1)
 	p.Parent = folder
-	TweenService:Create(p, TweenInfo.new(data.duration or 1), { Transparency = 1, Size = Vector3.new(length, 0.5, 0.5) }):Play()
+	TweenService
+		:Create(p, TweenInfo.new(data.duration or 1), { Transparency = 1, Size = Vector3.new(length, 0.5, 0.5) })
+		:Play()
 	Debris:AddItem(p, (data.duration or 1) + 0.1)
 end
 
@@ -119,7 +125,11 @@ local function heal(data)
 	p.Transparency = 0.2
 	p.Parent = folder
 	local d = (data.radius or 10) * 2
-	TweenService:Create(p, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = Vector3.new(0.3, d, d), Transparency = 1 }):Play()
+	TweenService:Create(
+		p,
+		TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+		{ Size = Vector3.new(0.3, d, d), Transparency = 1 }
+	):Play()
 	Debris:AddItem(p, 0.7)
 end
 

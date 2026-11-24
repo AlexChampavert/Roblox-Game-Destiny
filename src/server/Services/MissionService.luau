@@ -35,7 +35,8 @@ local active: {
 	checkpoint: CFrame,
 	running: boolean,
 	startedAt: number,
-}? = nil
+}? =
+	nil
 
 local rng = Random.new()
 
@@ -84,7 +85,8 @@ local function scaling()
 	local n = math.max(#Players:GetPlayers(), 1)
 	return {
 		healthMult = 1 + (n - 1) * Progression.HealthScalePerExtraPlayer,
-		extra = (n - 1) * Progression.ExtraEnemiesPerExtraPlayer + (if workspace:GetAttribute("Modifier") == "Frenzy" then 1 else 0),
+		extra = (n - 1) * Progression.ExtraEnemiesPerExtraPlayer
+			+ (if workspace:GetAttribute("Modifier") == "Frenzy" then 1 else 0),
 	}
 end
 
@@ -265,7 +267,10 @@ function Runners.Escort(step, zone): boolean
 			end
 			travelled += stepDist
 		end
-		objective(if escorted then step.text else step.text .. " — stay close to the drone!", math.clamp(travelled / totalLength, 0, 1))
+		objective(
+			if escorted then step.text else step.text .. " — stay close to the drone!",
+			math.clamp(travelled / totalLength, 0, 1)
+		)
 		task.wait(0.1)
 	end
 	drone:Destroy()
@@ -400,7 +405,8 @@ function MissionService.Start(missionId: string)
 	local origin = if workspace:GetAttribute("ReservedServer") then Vector3.zero else STUDIO_ORIGIN
 	MissionBuilder.ApplyTheme(def.theme)
 	local layout = MissionBuilder.Build(def, origin)
-	active = { def = def, layout = layout, stepIndex = 0, checkpoint = layout.start, running = true, startedAt = os.clock() }
+	active =
+		{ def = def, layout = layout, stepIndex = 0, checkpoint = layout.start, running = true, startedAt = os.clock() }
 
 	for _, p in Players:GetPlayers() do
 		Telemetry.Step(p, Telemetry.Funnel.FirstLaunch)
@@ -410,7 +416,15 @@ function MissionService.Start(missionId: string)
 	end
 	notifyAll(def.intro, "story")
 	if workspace:GetAttribute("Featured") then
-		notifyAll("Featured mission this week: double XP!" .. (if workspace:GetAttribute("Modifier") then " Modifier: " .. workspace:GetAttribute("Modifier") else ""), "info")
+		notifyAll(
+			"Featured mission this week: double XP!"
+				.. (
+					if workspace:GetAttribute("Modifier")
+						then " Modifier: " .. workspace:GetAttribute("Modifier")
+						else ""
+				),
+			"info"
+		)
 	end
 
 	task.spawn(function()

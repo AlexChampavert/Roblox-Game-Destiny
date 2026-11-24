@@ -38,7 +38,14 @@ local loadedEvent = Instance.new("BindableEvent")
 DataService.Loaded = loadedEvent.Event -- fires (player, profile)
 
 local function starterItem(slot: string)
-	return { uid = slot .. "_starter", slot = slot, weaponId = nil, power = Progression.StartPower, rarity = "Common", perks = {} }
+	return {
+		uid = slot .. "_starter",
+		slot = slot,
+		weaponId = nil,
+		power = Progression.StartPower,
+		rarity = "Common",
+		perks = {},
+	}
 end
 
 local function defaultProfile()

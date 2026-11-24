@@ -97,12 +97,22 @@ end
 -- ===== Input =====
 
 local KEY_ACTIONS: { [Enum.KeyCode]: () -> () } = {
-	[Enum.KeyCode.Q] = function() useAbility("Q") end,
-	[Enum.KeyCode.E] = function() useAbility("E") end,
-	[Enum.KeyCode.F] = function() useAbility("F") end,
+	[Enum.KeyCode.Q] = function()
+		useAbility("Q")
+	end,
+	[Enum.KeyCode.E] = function()
+		useAbility("E")
+	end,
+	[Enum.KeyCode.F] = function()
+		useAbility("F")
+	end,
 	[Enum.KeyCode.R] = reload,
-	[Enum.KeyCode.One] = function() swapWeapon("primary") end,
-	[Enum.KeyCode.Two] = function() swapWeapon("secondary") end,
+	[Enum.KeyCode.One] = function()
+		swapWeapon("primary")
+	end,
+	[Enum.KeyCode.Two] = function()
+		swapWeapon("secondary")
+	end,
 	[Enum.KeyCode.Tab] = function()
 		if Menus then
 			if Menus.IsOpen() then
@@ -113,11 +123,19 @@ local KEY_ACTIONS: { [Enum.KeyCode]: () -> () } = {
 		end
 	end,
 	-- Gamepad
-	[Enum.KeyCode.ButtonL1] = function() useAbility("Q") end,
-	[Enum.KeyCode.ButtonR1] = function() useAbility("E") end,
-	[Enum.KeyCode.ButtonB] = function() useAbility("F") end,
+	[Enum.KeyCode.ButtonL1] = function()
+		useAbility("Q")
+	end,
+	[Enum.KeyCode.ButtonR1] = function()
+		useAbility("E")
+	end,
+	[Enum.KeyCode.ButtonB] = function()
+		useAbility("F")
+	end,
 	[Enum.KeyCode.ButtonX] = reload,
-	[Enum.KeyCode.ButtonY] = function() swapWeapon(nil) end,
+	[Enum.KeyCode.ButtonY] = function()
+		swapWeapon(nil)
+	end,
 }
 
 local function onInputBegan(input: InputObject, processed: boolean)
@@ -280,7 +298,11 @@ function Combat.PredictShot(w, aim: Vector3)
 		local dir = baseDir
 		if w.pellets > 1 or w.spread > 1 then
 			local cf = CFrame.lookAt(Vector3.zero, baseDir)
-			dir = (cf * CFrame.Angles(0, 0, math.random() * math.pi * 2) * CFrame.Angles(math.rad(math.random() * w.spread), 0, 0)).LookVector
+			dir = (cf * CFrame.Angles(0, 0, math.random() * math.pi * 2) * CFrame.Angles(
+				math.rad(math.random() * w.spread),
+				0,
+				0
+			)).LookVector
 		end
 		local result = workspace:Raycast(head.Position, dir * w.range, params)
 		local hitPos = if result then result.Position else head.Position + dir * w.range
@@ -360,7 +382,11 @@ local function updatePoses()
 		local char = other.Character
 		if other ~= player and char then
 			local aiming = mission and char:FindFirstChild("Gun") ~= nil and not char:GetAttribute("Downed")
-			poseCharacter(char, if aiming then (char:GetAttribute("AimPitch") or 0) else nil, other:GetAttribute("Reloading") == true)
+			poseCharacter(
+				char,
+				if aiming then (char:GetAttribute("AimPitch") or 0) else nil,
+				other:GetAttribute("Reloading") == true
+			)
 		end
 	end
 end

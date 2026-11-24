@@ -155,7 +155,11 @@ local function addHealthBar(def, head: BasePart, hum: Humanoid)
 	end)
 end
 
-function EnemyService.Spawn(enemyId: string, position: Vector3, opts: { healthMult: number?, damageMult: number?, speedMult: number? }?): Model?
+function EnemyService.Spawn(
+	enemyId: string,
+	position: Vector3,
+	opts: { healthMult: number?, damageMult: number?, speedMult: number? }?
+): Model?
 	local def = Enemies[enemyId]
 	if not def then
 		warn("[EnemyService] unknown enemy", enemyId)
@@ -399,7 +403,10 @@ local function stepProjectiles(dt: number)
 			done = true
 		end
 		if done then
-			Net.event("Effect"):FireAllClients("Explosion", { position = proj.part.Position, radius = proj.radius, color = proj.part.Color })
+			Net.event("Effect"):FireAllClients(
+				"Explosion",
+				{ position = proj.part.Position, radius = proj.radius, color = proj.part.Color }
+			)
 			proj.part:Destroy()
 			table.remove(projectiles, i)
 		else
@@ -430,7 +437,8 @@ local function special(brain: Brain, targetRoot: BasePart)
 		if brain.hum.Health <= 0 then
 			return
 		end
-		Net.event("Effect"):FireAllClients("Explosion", { position = center, radius = spec.radius, color = brain.def.color })
+		Net.event("Effect")
+			:FireAllClients("Explosion", { position = center, radius = spec.radius, color = brain.def.color })
 		for _, p in Players:GetPlayers() do
 			local _, _, root = CombatService.GetAlive(p)
 			if root and (root.Position - center).Magnitude <= spec.radius then
@@ -445,7 +453,8 @@ local function attack(brain: Brain, target: Player, targetRoot: BasePart)
 	local damage = def.damage * brain.damageMult
 	if def.attackType == "Melee" then
 		CombatService.DamagePlayer(target, damage)
-		Net.event("Effect"):FireAllClients("Explosion", { position = targetRoot.Position, radius = 3 * def.size, color = def.color })
+		Net.event("Effect")
+			:FireAllClients("Explosion", { position = targetRoot.Position, radius = 3 * def.size, color = def.color })
 		return
 	end
 	if def.projectile then
@@ -460,11 +469,13 @@ local function attack(brain: Brain, target: Player, targetRoot: BasePart)
 	local origin = brain.head.Position
 	local result = workspace:Raycast(origin, targetRoot.Position - origin, params)
 	if result then
-		Net.event("Effect"):FireAllClients("Tracer", { from = origin, to = result.Position, color = def.color, enemy = true })
+		Net.event("Effect")
+			:FireAllClients("Tracer", { from = origin, to = result.Position, color = def.color, enemy = true })
 		return
 	end
 	CombatService.DamagePlayer(target, damage)
-	Net.event("Effect"):FireAllClients("Tracer", { from = origin, to = targetRoot.Position, color = def.color, enemy = true })
+	Net.event("Effect")
+		:FireAllClients("Tracer", { from = origin, to = targetRoot.Position, color = def.color, enemy = true })
 end
 
 -- ===== Movement (direct when visible, pathfinding when blocked) =====
