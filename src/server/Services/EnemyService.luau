@@ -118,7 +118,7 @@ local function buildPlaceholder(def): Model
 	return model
 end
 
-local function addHealthBar(model: Model, def, head: BasePart, hum: Humanoid)
+local function addHealthBar(def, head: BasePart, hum: Humanoid)
 	local gui = Instance.new("BillboardGui")
 	gui.Name = "HealthBar"
 	gui.Size = if def.isBoss then UDim2.fromOffset(260, 34) else UDim2.fromOffset(90, 18)
@@ -186,7 +186,7 @@ function EnemyService.Spawn(enemyId: string, position: Vector3, opts: { healthMu
 	model:PivotTo(CFrame.new(position + Vector3.new(0, 3 * def.size + 2, 0)))
 	model.Parent = enemyFolder
 	root:SetNetworkOwner(nil) -- server simulates enemies
-	addHealthBar(model, def, head, hum)
+	addHealthBar(def, head, hum)
 
 	brains[model] = {
 		model = model,

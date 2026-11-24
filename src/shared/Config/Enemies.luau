@@ -25,7 +25,7 @@ export type EnemyDef = {
 	size: number, -- scale of placeholder body
 	color: Color3,
 	isBoss: boolean?,
-	phases: { BossPhase }?,
+	phases: { any }?, -- list of BossPhase (typed loosely: Luau can't infer mixed literal shapes)
 	-- Ranged enemies with a projectile fire dodgeable shots instead of instant hits
 	projectile: { speed: number, size: number }?,
 	-- Telegraphed special attack: a warning circle appears under the target, then explodes

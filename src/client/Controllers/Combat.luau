@@ -105,7 +105,11 @@ local KEY_ACTIONS: { [Enum.KeyCode]: () -> () } = {
 	[Enum.KeyCode.Two] = function() swapWeapon("secondary") end,
 	[Enum.KeyCode.Tab] = function()
 		if Menus then
-			if Menus.IsOpen() then Menus.Close() else Menus.Open("Fireteam") end
+			if Menus.IsOpen() then
+				Menus.Close()
+			else
+				Menus.Open("Fireteam")
+			end
 		end
 	end,
 	-- Gamepad
@@ -159,11 +163,19 @@ local function bindTouchButtons()
 	end, function()
 		firing = false
 	end)
-	bind("TouchQ", "Q", UDim2.new(1, -230, 1, -130), function() useAbility("Q") end)
-	bind("TouchE", "E", UDim2.new(1, -230, 1, -200), function() useAbility("E") end)
-	bind("TouchF", "SUPER", UDim2.new(1, -170, 1, -260), function() useAbility("F") end)
+	bind("TouchQ", "Q", UDim2.new(1, -230, 1, -130), function()
+		useAbility("Q")
+	end)
+	bind("TouchE", "E", UDim2.new(1, -230, 1, -200), function()
+		useAbility("E")
+	end)
+	bind("TouchF", "SUPER", UDim2.new(1, -170, 1, -260), function()
+		useAbility("F")
+	end)
 	bind("TouchReload", "R", UDim2.new(1, -90, 1, -250), reload)
-	bind("TouchSwap", "SWAP", UDim2.new(1, -300, 1, -160), function() swapWeapon(nil) end)
+	bind("TouchSwap", "SWAP", UDim2.new(1, -300, 1, -160), function()
+		swapWeapon(nil)
+	end)
 end
 
 -- ===== Per frame =====
@@ -312,8 +324,12 @@ local function poseCharacter(char: Model, pitch: number?, reloading: boolean)
 		end
 	end
 	if pitch == nil then
-		if right and originalC0[right] then right.C0 = originalC0[right] end
-		if left and originalC0[left] then left.C0 = originalC0[left] end
+		if right and originalC0[right] then
+			right.C0 = originalC0[right]
+		end
+		if left and originalC0[left] then
+			left.C0 = originalC0[left]
+		end
 		return
 	end
 	local p = if reloading then -0.6 else pitch

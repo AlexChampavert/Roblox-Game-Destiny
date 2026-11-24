@@ -20,7 +20,8 @@ function UI.new(className: string, props: { [string]: any }, children: { Instanc
 			(inst :: any)[k] = v
 		end
 	end
-	for _, child in children or {} do
+	local list: { Instance } = children or {}
+	for _, child in list do
 		child.Parent = inst
 	end
 	if props.Parent then

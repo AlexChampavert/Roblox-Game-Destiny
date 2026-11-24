@@ -299,10 +299,8 @@ local function buildClassHalls(hub: Model)
 
 		-- Tint the hall in the class color
 		for _, d in m:GetDescendants() do
-			if d.Name == "RoofTrim" and d:IsA("BasePart") then
-				d.Color = class.color
-			elseif d:IsA("PointLight") then
-				d.Color = class.color
+			if (d.Name == "RoofTrim" and d:IsA("BasePart")) or d:IsA("PointLight") then
+				(d :: any).Color = class.color
 			end
 		end
 		for _, z in { -HALL_SIZE.Z / 2 + 1.2, HALL_SIZE.Z / 2 - 1.2 } do
@@ -400,7 +398,8 @@ function HubBuilder.Build(): Model
 	local hub = Instance.new("Model")
 	hub.Name = "Hub"
 	local flags: { [string]: boolean } = {}
-	for _, f in Story.currentChapter().hubFlags or {} do
+	local hubFlags: { string } = Story.currentChapter().hubFlags or {}
+	for _, f in hubFlags do
 		flags[f] = true
 	end
 	buildShip(hub)

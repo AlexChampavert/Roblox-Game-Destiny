@@ -16,7 +16,7 @@ export type Wave = { [string]: number } -- enemyId -> count
 export type Step = {
 	type: "Reach" | "Clear" | "Defend" | "Capture" | "Escort" | "Boss",
 	text: string,
-	waves: { Wave }?,
+	waves: { any }?, -- list of Wave (typed loosely: Luau can't infer mixed literal shapes)
 	duration: number?,
 	points: number?,
 	captureTime: number?,

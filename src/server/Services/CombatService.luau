@@ -257,19 +257,20 @@ end
 -- ===== Damage helpers =====
 
 function CombatService.AddSuper(player: Player, amount: number)
-	if amount > 0 and (player:GetAttribute("OrderRank") or 0) >= 20 then
+	if amount > 0 and (tonumber(player:GetAttribute("OrderRank")) or 0) >= 20 then
 		amount *= 1.25 -- Order upgrade: SuperGain
 	end
-	local charge = (player:GetAttribute("SuperCharge") or 0) + amount
+	local charge = (tonumber(player:GetAttribute("SuperCharge")) or 0) + amount
 	player:SetAttribute("SuperCharge", math.clamp(charge, 0, 100))
 end
 
 -- Damage reduction buff on a character (Bastion, Sanctuary, Lifeline...)
 function CombatService.ApplyDamageReduction(char: Model, amount: number, duration: number)
 	local t = now()
-	local current = if (char:GetAttribute("DRUntil") or 0) > t then (char:GetAttribute("DR") or 0) else 0
+	local drUntil = tonumber(char:GetAttribute("DRUntil")) or 0
+	local current = if drUntil > t then (tonumber(char:GetAttribute("DR")) or 0) else 0
 	char:SetAttribute("DR", math.max(current, amount))
-	char:SetAttribute("DRUntil", math.max(char:GetAttribute("DRUntil") or 0, t + duration))
+	char:SetAttribute("DRUntil", math.max(drUntil, t + duration))
 end
 
 function CombatService.FindEnemyModel(inst: Instance?): Model?
