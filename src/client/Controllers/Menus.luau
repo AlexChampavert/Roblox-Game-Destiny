@@ -520,7 +520,12 @@ local function itemCard(item, equipped: boolean)
 	local c = card(if #perkNames > 0 then 76 else 56)
 	c.UIStroke.Color = rarity.color
 	UI.label({
-		Text = ("%s %s%s   ⚡%d"):format(rarity.name, if item.element then item.element .. " " else "", itemName(item), item.power),
+		Text = ("%s %s%s   ⚡%d"):format(
+			rarity.name,
+			if item.element then item.element .. " " else "",
+			itemName(item),
+			item.power
+		),
 		Size = UDim2.new(0.62, 0, 0, 22),
 		TextColor3 = rarity.color,
 		Parent = c,

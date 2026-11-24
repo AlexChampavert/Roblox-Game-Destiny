@@ -152,7 +152,8 @@ function ProgressionService.GrantGear(player: Player, pinnacle: boolean, bonusPo
 		rarity = rarity,
 		perks = if slot ~= "armor" then rollPerks(rarity) else {},
 		-- Elements: Common weapons are kinetic, Rare 50% elemental, Legendary/Exotic always elemental
-		element = if slot ~= "armor" and (rarity == "Legendary" or rarity == "Exotic" or (rarity == "Rare" and rng:NextNumber() < 0.5))
+		element = if slot ~= "armor"
+				and (rarity == "Legendary" or rarity == "Exotic" or (rarity == "Rare" and rng:NextNumber() < 0.5))
 			then ELEMENT_IDS[rng:NextInteger(1, #ELEMENT_IDS)]
 			else nil,
 	}

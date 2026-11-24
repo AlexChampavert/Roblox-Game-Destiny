@@ -454,7 +454,10 @@ end
 function CombatService.BreakShield(model: Model, element: string?, attacker: Player?)
 	local pos = model:GetPivot().Position
 	local def = element and Elements[element]
-	Net.event("Effect"):FireAllClients("Explosion", { position = pos, radius = 10, color = if def then def.color else Color3.new(1, 1, 1) })
+	Net.event("Effect"):FireAllClients(
+		"Explosion",
+		{ position = pos, radius = 10, color = if def then def.color else Color3.new(1, 1, 1) }
+	)
 	if attacker then
 		Net.event("Notify"):FireClient(attacker, "Shield broken!", "super")
 	end

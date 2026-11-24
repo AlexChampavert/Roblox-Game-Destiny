@@ -613,7 +613,8 @@ local function think(brain: Brain, dt: number)
 			brain.nextExpose = clock + brain.def.weakPoint.every
 			wp.Transparency = 0
 			wp.CanQuery = true
-			Net.event("Notify"):FireAllClients(brain.def.name .. ": weak point exposed! Aim for the glowing core.", "boss")
+			Net.event("Notify")
+				:FireAllClients(brain.def.name .. ": weak point exposed! Aim for the glowing core.", "boss")
 		elseif exposed == false and wp.CanQuery then
 			wp.Transparency = 1
 			wp.CanQuery = false

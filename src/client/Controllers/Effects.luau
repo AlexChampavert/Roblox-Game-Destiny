@@ -149,7 +149,8 @@ local function damageNumber(data)
 	label.Text = tostring(data.amount)
 	label.Font = Enum.Font.GothamBlack
 	label.TextScaled = true
-	label.TextColor3 = if data.shield then Color3.fromRGB(120, 200, 255)
+	label.TextColor3 = if data.shield
+		then Color3.fromRGB(120, 200, 255)
 		elseif data.headshot then Color3.fromRGB(255, 220, 60)
 		else Color3.new(1, 1, 1)
 	label.TextStrokeTransparency = 0.3
