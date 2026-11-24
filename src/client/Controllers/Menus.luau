@@ -97,21 +97,17 @@ function Pages.Classes(state)
 			})
 		end
 		if not selected then
-			UI.button(
-				"SELECT",
-				{
-					AnchorPoint = Vector2.new(1, 0.5),
-					Position = UDim2.new(1, 0, 0.5, 0),
-					Size = UDim2.fromOffset(110, 44),
-					BackgroundColor3 = class.color,
-					TextColor3 = Color3.new(0, 0, 0),
-					Parent = c,
-				},
-				function()
-					Net.event("SelectClass"):FireServer(id)
-					Menus.Close()
-				end
-			)
+			UI.button("SELECT", {
+				AnchorPoint = Vector2.new(1, 0.5),
+				Position = UDim2.new(1, 0, 0.5, 0),
+				Size = UDim2.fromOffset(110, 44),
+				BackgroundColor3 = class.color,
+				TextColor3 = Color3.new(0, 0, 0),
+				Parent = c,
+			}, function()
+				Net.event("SelectClass"):FireServer(id)
+				Menus.Close()
+			end)
 		end
 	end
 end
@@ -191,37 +187,29 @@ function Pages.Missions(state)
 				Parent = c,
 			})
 		elseif isLeader then
-			UI.button(
-				"LAUNCH",
-				{
+			UI.button("LAUNCH", {
+				AnchorPoint = Vector2.new(1, 0),
+				Position = UDim2.new(1, 0, 0, 4),
+				Size = UDim2.fromOffset(130, 40),
+				BackgroundColor3 = C.accent,
+				TextColor3 = Color3.new(0, 0, 0),
+				Parent = c,
+			}, function()
+				Net.event("LaunchMission"):FireServer(m.id)
+				Menus.Close()
+			end)
+			if not state.fireteam.inTeam then
+				UI.button("FIND FIRETEAM", {
 					AnchorPoint = Vector2.new(1, 0),
-					Position = UDim2.new(1, 0, 0, 4),
-					Size = UDim2.fromOffset(130, 40),
-					BackgroundColor3 = C.accent,
+					Position = UDim2.new(1, 0, 0, 50),
+					Size = UDim2.fromOffset(130, 36),
+					BackgroundColor3 = C.gold,
 					TextColor3 = Color3.new(0, 0, 0),
 					Parent = c,
-				},
-				function()
-					Net.event("LaunchMission"):FireServer(m.id)
+				}, function()
+					Net.event("Matchmaking"):FireServer("Join", m.id)
 					Menus.Close()
-				end
-			)
-			if not state.fireteam.inTeam then
-				UI.button(
-					"FIND FIRETEAM",
-					{
-						AnchorPoint = Vector2.new(1, 0),
-						Position = UDim2.new(1, 0, 0, 50),
-						Size = UDim2.fromOffset(130, 36),
-						BackgroundColor3 = C.gold,
-						TextColor3 = Color3.new(0, 0, 0),
-						Parent = c,
-					},
-					function()
-						Net.event("Matchmaking"):FireServer("Join", m.id)
-						Menus.Close()
-					end
-				)
+				end)
 			end
 		else
 			UI.label({
@@ -268,20 +256,16 @@ function Pages.Fireteam(state)
 			Parent = c,
 		})
 		if team.leaderId == player.UserId and m.userId ~= player.UserId then
-			UI.button(
-				"Kick",
-				{
-					AnchorPoint = Vector2.new(1, 0),
-					Position = UDim2.new(1, 0, 0, 2 + i * 30),
-					Size = UDim2.fromOffset(60, 26),
-					Parent = c,
-				},
-				function()
-					Net.event("FireteamAction"):FireServer("Kick", m.userId)
-					task.wait(0.3)
-					Menus.Open("Fireteam")
-				end
-			)
+			UI.button("Kick", {
+				AnchorPoint = Vector2.new(1, 0),
+				Position = UDim2.new(1, 0, 0, 2 + i * 30),
+				Size = UDim2.fromOffset(60, 26),
+				Parent = c,
+			}, function()
+				Net.event("FireteamAction"):FireServer("Kick", m.userId)
+				task.wait(0.3)
+				Menus.Open("Fireteam")
+			end)
 		end
 	end
 	if team.inTeam then
@@ -326,18 +310,14 @@ function Pages.Fireteam(state)
 			Font = Enum.Font.Gotham,
 			Parent = row,
 		})
-		UI.button(
-			"Invite",
-			{
-				AnchorPoint = Vector2.new(1, 0.5),
-				Position = UDim2.new(1, 0, 0.5, 0),
-				Size = UDim2.fromOffset(80, 30),
-				Parent = row,
-			},
-			function()
-				Net.event("FireteamAction"):FireServer("Invite", p.userId)
-			end
-		)
+		UI.button("Invite", {
+			AnchorPoint = Vector2.new(1, 0.5),
+			Position = UDim2.new(1, 0, 0.5, 0),
+			Size = UDim2.fromOffset(80, 30),
+			Parent = row,
+		}, function()
+			Net.event("FireteamAction"):FireServer("Invite", p.userId)
+		end)
 	end
 end
 
@@ -419,20 +399,16 @@ function Pages.ClassHall(state, classId: string?)
 		Parent = c,
 	})
 	if not isMember then
-		UI.button(
-			("JOIN THE %s ORDER"):format(class.name:upper()),
-			{
-				Position = UDim2.fromOffset(0, 124),
-				Size = UDim2.new(0.6, 0, 0, 34),
-				BackgroundColor3 = class.color,
-				TextColor3 = Color3.new(0, 0, 0),
-				Parent = c,
-			},
-			function()
-				Net.event("SelectClass"):FireServer(class.id)
-				Menus.Close()
-			end
-		)
+		UI.button(("JOIN THE %s ORDER"):format(class.name:upper()), {
+			Position = UDim2.fromOffset(0, 124),
+			Size = UDim2.new(0.6, 0, 0, 34),
+			BackgroundColor3 = class.color,
+			TextColor3 = Color3.new(0, 0, 0),
+			Parent = c,
+		}, function()
+			Net.event("SelectClass"):FireServer(class.id)
+			Menus.Close()
+		end)
 	end
 
 	local a = card(110)
@@ -498,21 +474,17 @@ function Pages.ClassHall(state, classId: string?)
 				Parent = v,
 			})
 		else
-			UI.button(
-				("%s Order Armor (cosmetic) — ◆ %d"):format(class.name, Loot.Vendor.ArmorStyleCost),
-				{
-					Position = UDim2.fromOffset(0, 72),
-					Size = UDim2.new(1, 0, 0, 34),
-					BackgroundColor3 = class.color,
-					TextColor3 = Color3.new(0, 0, 0),
-					Parent = v,
-				},
-				function()
-					Net.event("Vendor"):FireServer("BuyArmorStyle")
-					task.wait(0.4)
-					Menus.Open("ClassHall", class.id)
-				end
-			)
+			UI.button(("%s Order Armor (cosmetic) — ◆ %d"):format(class.name, Loot.Vendor.ArmorStyleCost), {
+				Position = UDim2.fromOffset(0, 72),
+				Size = UDim2.new(1, 0, 0, 34),
+				BackgroundColor3 = class.color,
+				TextColor3 = Color3.new(0, 0, 0),
+				Parent = v,
+			}, function()
+				Net.event("Vendor"):FireServer("BuyArmorStyle")
+				task.wait(0.4)
+				Menus.Open("ClassHall", class.id)
+			end)
 		end
 	else
 		UI.label({
@@ -569,37 +541,29 @@ local function itemCard(item, equipped: boolean)
 		})
 	end
 	if not equipped then
-		UI.button(
-			"Equip",
-			{
-				AnchorPoint = Vector2.new(1, 0),
-				Position = UDim2.new(1, -96, 0, 6),
-				Size = UDim2.fromOffset(84, 32),
-				BackgroundColor3 = C.accent,
-				TextColor3 = Color3.new(0, 0, 0),
-				Parent = c,
-			},
-			function()
-				Net.event("Inventory"):FireServer("Equip", item.uid)
-				task.wait(0.3)
-				Menus.Open("Inventory")
-			end
-		)
-		UI.button(
-			("◆ %d"):format(rarity.dismantle),
-			{
-				AnchorPoint = Vector2.new(1, 0),
-				Position = UDim2.new(1, 0, 0, 6),
-				Size = UDim2.fromOffset(84, 32),
-				BackgroundColor3 = Color3.fromRGB(80, 30, 30),
-				Parent = c,
-			},
-			function()
-				Net.event("Inventory"):FireServer("Dismantle", item.uid)
-				task.wait(0.3)
-				Menus.Open("Inventory")
-			end
-		)
+		UI.button("Equip", {
+			AnchorPoint = Vector2.new(1, 0),
+			Position = UDim2.new(1, -96, 0, 6),
+			Size = UDim2.fromOffset(84, 32),
+			BackgroundColor3 = C.accent,
+			TextColor3 = Color3.new(0, 0, 0),
+			Parent = c,
+		}, function()
+			Net.event("Inventory"):FireServer("Equip", item.uid)
+			task.wait(0.3)
+			Menus.Open("Inventory")
+		end)
+		UI.button(("◆ %d"):format(rarity.dismantle), {
+			AnchorPoint = Vector2.new(1, 0),
+			Position = UDim2.new(1, 0, 0, 6),
+			Size = UDim2.fromOffset(84, 32),
+			BackgroundColor3 = Color3.fromRGB(80, 30, 30),
+			Parent = c,
+		}, function()
+			Net.event("Inventory"):FireServer("Dismantle", item.uid)
+			task.wait(0.3)
+			Menus.Open("Inventory")
+		end)
 	end
 end
 
@@ -665,27 +629,19 @@ function Pages.Bounties(state)
 			TextColor3 = C.gold,
 			Parent = c,
 		})
-		local back = UI.new(
-			"Frame",
-			{
-				Position = UDim2.fromOffset(0, 28),
-				Size = UDim2.new(1, 0, 0, 10),
-				BackgroundColor3 = Color3.fromRGB(25, 28, 38),
-				BorderSizePixel = 0,
-				Parent = c,
-			},
-			{ UI.corner(4) }
-		)
-		UI.new(
-			"Frame",
-			{
-				Size = UDim2.fromScale(math.clamp(b.progress / b.target, 0, 1), 1),
-				BackgroundColor3 = if b.done then C.good else C.gold,
-				BorderSizePixel = 0,
-				Parent = back,
-			},
-			{ UI.corner(4) }
-		)
+		local back = UI.new("Frame", {
+			Position = UDim2.fromOffset(0, 28),
+			Size = UDim2.new(1, 0, 0, 10),
+			BackgroundColor3 = Color3.fromRGB(25, 28, 38),
+			BorderSizePixel = 0,
+			Parent = c,
+		}, { UI.corner(4) })
+		UI.new("Frame", {
+			Size = UDim2.fromScale(math.clamp(b.progress / b.target, 0, 1), 1),
+			BackgroundColor3 = if b.done then C.good else C.gold,
+			BorderSizePixel = 0,
+			Parent = back,
+		}, { UI.corner(4) })
 	end
 end
 
@@ -746,20 +702,16 @@ local function showInvite(invite)
 		TextWrapped = true,
 		Parent = inviteFrame,
 	})
-	UI.button(
-		"Accept",
-		{
-			Position = UDim2.fromScale(0, 0.58),
-			Size = UDim2.fromScale(0.48, 0.4),
-			BackgroundColor3 = C.good,
-			TextColor3 = Color3.new(0, 0, 0),
-			Parent = inviteFrame,
-		},
-		function()
-			Net.event("FireteamAction"):FireServer("Accept", invite.teamId)
-			inviteFrame.Visible = false
-		end
-	)
+	UI.button("Accept", {
+		Position = UDim2.fromScale(0, 0.58),
+		Size = UDim2.fromScale(0.48, 0.4),
+		BackgroundColor3 = C.good,
+		TextColor3 = Color3.new(0, 0, 0),
+		Parent = inviteFrame,
+	}, function()
+		Net.event("FireteamAction"):FireServer("Accept", invite.teamId)
+		inviteFrame.Visible = false
+	end)
 	UI.button(
 		"Decline",
 		{ Position = UDim2.fromScale(0.52, 0.58), Size = UDim2.fromScale(0.48, 0.4), Parent = inviteFrame },
@@ -774,16 +726,13 @@ local function showInvite(invite)
 end
 
 function Menus.Start()
-	gui = UI.new(
-		"ScreenGui",
-		{
-			Name = "Menus",
-			ResetOnSpawn = false,
-			IgnoreGuiInset = true,
-			DisplayOrder = 10,
-			Parent = player:WaitForChild("PlayerGui"),
-		}
-	)
+	gui = UI.new("ScreenGui", {
+		Name = "Menus",
+		ResetOnSpawn = false,
+		IgnoreGuiInset = true,
+		DisplayOrder = 10,
+		Parent = player:WaitForChild("PlayerGui"),
+	})
 	window = UI.new("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.fromScale(0.5, 0.5),
@@ -801,16 +750,12 @@ function Menus.Start()
 		Font = Enum.Font.GothamBlack,
 		Parent = window,
 	})
-	UI.button(
-		"✕",
-		{
-			AnchorPoint = Vector2.new(1, 0),
-			Position = UDim2.new(1, -12, 0, 10),
-			Size = UDim2.fromOffset(40, 40),
-			Parent = window,
-		},
-		Menus.Close
-	)
+	UI.button("✕", {
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -12, 0, 10),
+		Size = UDim2.fromOffset(40, 40),
+		Parent = window,
+	}, Menus.Close)
 	content = UI.new("ScrollingFrame", {
 		Position = UDim2.fromOffset(12, 56),
 		Size = UDim2.new(1, -24, 1, -68),
@@ -822,18 +767,14 @@ function Menus.Start()
 		Parent = window,
 	}, { UI.new("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder }), UI.padding(4) })
 
-	inviteFrame = UI.new(
-		"Frame",
-		{
-			AnchorPoint = Vector2.new(0.5, 0),
-			Position = UDim2.new(0.5, 0, 0, 100),
-			Size = UDim2.fromOffset(340, 100),
-			BackgroundColor3 = C.bg,
-			Visible = false,
-			Parent = gui,
-		},
-		{ UI.corner(10), UI.stroke(C.gold, 2), UI.padding(10) }
-	)
+	inviteFrame = UI.new("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 100),
+		Size = UDim2.fromOffset(340, 100),
+		BackgroundColor3 = C.bg,
+		Visible = false,
+		Parent = gui,
+	}, { UI.corner(10), UI.stroke(C.gold, 2), UI.padding(10) })
 
 	Net.event("OpenMenu").OnClientEvent:Connect(Menus.Open)
 	Net.event("FireteamUpdate").OnClientEvent:Connect(function(data)

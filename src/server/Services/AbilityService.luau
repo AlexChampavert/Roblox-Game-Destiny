@@ -390,16 +390,13 @@ Abilities.OrbitalStrike = function(ctx)
 	warning.CFrame = CFrame.new(target) * CFrame.Angles(0, 0, math.rad(90))
 	Debris:AddItem(warning, 1.6)
 	task.delay(1.5, function()
-		effect(
-			"Beam",
-			{
-				from = target + Vector3.new(0, 400, 0),
-				to = target,
-				color = Color3.fromRGB(255, 240, 200),
-				width = 14,
-				duration = 1.2,
-			}
-		)
+		effect("Beam", {
+			from = target + Vector3.new(0, 400, 0),
+			to = target,
+			color = Color3.fromRGB(255, 240, 200),
+			width = 14,
+			duration = 1.2,
+		})
 		effect("Explosion", { position = target, radius = 22, color = Color3.fromRGB(255, 200, 120) })
 		for _, enemy in enemiesInRadius(target, 22) do
 			CombatService.DamageEnemy(enemy, 650, ctx.player)

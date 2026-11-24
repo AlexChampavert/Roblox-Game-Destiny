@@ -569,16 +569,13 @@ local function onFire(player: Player, aimPoint: any)
 					st.starfallHits += 1
 					if st.starfallHits >= 6 then
 						st.starfallHits = 0
-						Net.event("Effect"):FireAllClients(
-							"Beam",
-							{
-								from = hitPos + Vector3.new(0, 120, 0),
-								to = hitPos,
-								color = Color3.fromRGB(255, 220, 120),
-								width = 3,
-								duration = 0.5,
-							}
-						)
+						Net.event("Effect"):FireAllClients("Beam", {
+							from = hitPos + Vector3.new(0, 120, 0),
+							to = hitPos,
+							color = Color3.fromRGB(255, 220, 120),
+							width = 3,
+							duration = 0.5,
+						})
 						Net.event("Effect"):FireAllClients(
 							"Explosion",
 							{ position = hitPos, radius = 8, color = Color3.fromRGB(255, 220, 120) }
