@@ -12,7 +12,6 @@ local AimPose = {}
 local player = Players.LocalPlayer
 local camera = workspace.CurrentCamera
 
-
 local originalC0: { [Motor6D]: CFrame } = {}
 local lastPitchSent, lastPitchTime = 0, 0
 

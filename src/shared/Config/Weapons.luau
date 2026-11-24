@@ -32,7 +32,8 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 1,
 		headshotMult = 1.6,
 		length = 3.2,
-		adsFov = 55, recoil = 0.6,
+		adsFov = 55,
+		recoil = 0.6,
 		automatic = true,
 	},
 	HandCannon = {
@@ -47,7 +48,8 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 1,
 		headshotMult = 2.0,
 		length = 1.7,
-		adsFov = 58, recoil = 2.2,
+		adsFov = 58,
+		recoil = 2.2,
 		automatic = false,
 	},
 	ScoutRifle = {
@@ -62,7 +64,8 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 1,
 		headshotMult = 1.8,
 		length = 3.8,
-		adsFov = 42, recoil = 1.2,
+		adsFov = 42,
+		recoil = 1.2,
 		automatic = false,
 	},
 	SMG = {
@@ -77,7 +80,8 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 1,
 		headshotMult = 1.4,
 		length = 2.2,
-		adsFov = 62, recoil = 0.4,
+		adsFov = 62,
+		recoil = 0.4,
 		automatic = true,
 	},
 	Shotgun = {
@@ -92,7 +96,8 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 8,
 		headshotMult = 1.3,
 		length = 3.4,
-		adsFov = 64, recoil = 4.0,
+		adsFov = 64,
+		recoil = 4.0,
 		automatic = false,
 	},
 	Sniper = {
@@ -107,7 +112,8 @@ local Weapons: { [string]: WeaponDef } = {
 		pellets = 1,
 		headshotMult = 2.5,
 		length = 4.8,
-		adsFov = 20, recoil = 5.0,
+		adsFov = 20,
+		recoil = 5.0,
 		automatic = false,
 	},
 }

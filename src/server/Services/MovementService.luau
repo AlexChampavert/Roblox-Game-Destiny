@@ -144,7 +144,8 @@ local function onMantle(player: Player)
 	local standY = top.Position.Y + hum.HipHeight + root.Size.Y / 2 + 0.1
 	local target = Vector3.new(top.Position.X, standY, top.Position.Z)
 	char:PivotTo(CFrame.lookAt(target, target + forward))
-	Net.event("Effect"):FireAllClients("Explosion", { position = top.Position, radius = 2, color = Color3.fromRGB(200, 200, 210) })
+	Net.event("Effect")
+		:FireAllClients("Explosion", { position = top.Position, radius = 2, color = Color3.fromRGB(200, 200, 210) })
 end
 
 function MovementService.Start()

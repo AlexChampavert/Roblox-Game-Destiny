@@ -251,7 +251,11 @@ local function onInputBegan(input: InputObject, processed: boolean)
 		sprinting = not sprinting
 		return
 	end
-	if input.KeyCode == Enum.KeyCode.C or input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.ButtonR3 then
+	if
+		input.KeyCode == Enum.KeyCode.C
+		or input.KeyCode == Enum.KeyCode.LeftControl
+		or input.KeyCode == Enum.KeyCode.ButtonR3
+	then
 		trySlide()
 		return
 	end
@@ -339,7 +343,12 @@ local function updateCamera(dt: number)
 
 	-- Field of view: zoom when aiming, widen a little when sprinting (frame-rate independent smoothing)
 	local w = Weapons[player:GetAttribute("WeaponId") or ""]
-	local targetFov = if combat and aiming and w then w.adsFov elseif sprinting and hum.MoveDirection.Magnitude > 0 then SPRINT_FOV else HIP_FOV
+	local targetFov = if combat
+			and aiming
+			and w
+		then w.adsFov
+		elseif sprinting and hum.MoveDirection.Magnitude > 0 then SPRINT_FOV
+		else HIP_FOV
 	camera.FieldOfView += (targetFov - camera.FieldOfView) * (1 - math.exp(-14 * dt))
 	-- Keep the crosshair speed on screen the same when zoomed: scale mouse sensitivity by tan(fov/2)
 	pcall(function()
