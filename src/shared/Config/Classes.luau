@@ -20,7 +20,7 @@ export type ClassDef = {
 	passive: { id: string, name: string, description: string },
 	element: string,
 	abilities: { Q: AbilityDef, E: AbilityDef, F: AbilityDef, G: AbilityDef, V: AbilityDef },
-	startingWeapons: { primary: string, secondary: string },
+	startingWeapons: { primary: string, secondary: string, heavy: string },
 	hall: { name: string, lore: string, centerpiece: string }, -- class hall on the Meridian
 }
 
@@ -66,7 +66,7 @@ local Classes: { [string]: ClassDef } = {
 				cooldown = 6,
 			},
 		},
-		startingWeapons = { primary = "AutoRifle", secondary = "Shotgun" },
+		startingWeapons = { primary = "AutoRifle", secondary = "Shotgun", heavy = "MachineGun" },
 		hall = {
 			name = "The Bastion",
 			lore = "Bulwarks stand where others fall. Their hall smells of oil and hot steel, and every dent in the shield wall has a story.",
@@ -105,7 +105,7 @@ local Classes: { [string]: ClassDef } = {
 				cooldown = 5,
 			},
 		},
-		startingWeapons = { primary = "HandCannon", secondary = "SMG" },
+		startingWeapons = { primary = "HandCannon", secondary = "SMG", heavy = "RocketLauncher" },
 		hall = {
 			name = "The Shadow Gallery",
 			lore = "No lights, no names. Phantoms leave a mark on the wall for every target, and nobody has ever counted them all.",
@@ -149,7 +149,7 @@ local Classes: { [string]: ClassDef } = {
 				cooldown = 5,
 			},
 		},
-		startingWeapons = { primary = "ScoutRifle", secondary = "SMG" },
+		startingWeapons = { primary = "ScoutRifle", secondary = "SMG", heavy = "RocketLauncher" },
 		hall = {
 			name = "The Starwell",
 			lore = "An observatory around a sliver of the Starfall itself. Arcanists study it day and night, and some swear it whispers back.",
@@ -202,7 +202,7 @@ local Classes: { [string]: ClassDef } = {
 				cooldown = 5,
 			},
 		},
-		startingWeapons = { primary = "AutoRifle", secondary = "HandCannon" },
+		startingWeapons = { primary = "AutoRifle", secondary = "HandCannon", heavy = "MachineGun" },
 		hall = {
 			name = "The Verdant Sanctum",
 			lore = "The only garden left in orbit. Lifebinders grow the ship's medicine here and patch up anyone who walks in bleeding.",
@@ -246,7 +246,7 @@ local Classes: { [string]: ClassDef } = {
 				cooldown = 5,
 			},
 		},
-		startingWeapons = { primary = "SMG", secondary = "ScoutRifle" },
+		startingWeapons = { primary = "SMG", secondary = "ScoutRifle", heavy = "RocketLauncher" },
 		hall = {
 			name = "The Forge Deck",
 			lore = "Half workshop, half scrapyard. If something on the Meridian works, an Engineer built it twice.",

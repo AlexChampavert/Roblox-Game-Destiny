@@ -158,7 +158,9 @@ local function getState(player: Player)
 end
 
 local function launch(player: Player, missionId: string)
+	print(("[Starfall] %s asked to launch %s"):format(player.Name, missionId))
 	if workspace:GetAttribute("Mode") ~= "Hub" or MissionService.IsActive() then
+		notify(player, "A mission is already running.", "error")
 		return
 	end
 	MatchmakingService.Cancel(player, true)
@@ -199,7 +201,11 @@ local function launch(player: Player, missionId: string)
 		if team then
 			team.launching = false
 		end
-		MissionService.Start(missionId)
+		local ok, err = pcall(MissionService.Start, missionId)
+		if not ok then
+			warn("[Starfall] MissionService.Start failed:", err)
+			notify(player, "Mission failed to start: " .. tostring(err), "error")
+		end
 		return
 	end
 
