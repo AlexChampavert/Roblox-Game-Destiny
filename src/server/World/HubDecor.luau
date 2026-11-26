@@ -98,9 +98,32 @@ end
 -- ===== Props =====
 
 local function tree(parent: Instance, pos: Vector3, scale: number)
-	P({ name = "Planter", size = Vector3.new(6, 2, 6) * scale, position = pos + Vector3.new(0, 1, 0) * scale, color = HULL_DARK, material = Enum.Material.Metal, parent = parent })
-	P({ name = "PlanterGlow", size = Vector3.new(6.2, 0.3, 6.2) * scale, position = pos + Vector3.new(0, 2, 0) * scale, color = Color3.fromRGB(90, 230, 130), material = Enum.Material.Neon, collide = false, parent = parent })
-	P({ name = "Trunk", shape = Enum.PartType.Cylinder, size = Vector3.new(7, 1, 1) * scale, cframe = CFrame.new(pos + Vector3.new(0, 5.5, 0) * scale) * CFrame.Angles(0, 0, math.rad(90)), color = Color3.fromRGB(105, 75, 50), material = Enum.Material.Wood, parent = parent })
+	P({
+		name = "Planter",
+		size = Vector3.new(6, 2, 6) * scale,
+		position = pos + Vector3.new(0, 1, 0) * scale,
+		color = HULL_DARK,
+		material = Enum.Material.Metal,
+		parent = parent,
+	})
+	P({
+		name = "PlanterGlow",
+		size = Vector3.new(6.2, 0.3, 6.2) * scale,
+		position = pos + Vector3.new(0, 2, 0) * scale,
+		color = Color3.fromRGB(90, 230, 130),
+		material = Enum.Material.Neon,
+		collide = false,
+		parent = parent,
+	})
+	P({
+		name = "Trunk",
+		shape = Enum.PartType.Cylinder,
+		size = Vector3.new(7, 1, 1) * scale,
+		cframe = CFrame.new(pos + Vector3.new(0, 5.5, 0) * scale) * CFrame.Angles(0, 0, math.rad(90)),
+		color = Color3.fromRGB(105, 75, 50),
+		material = Enum.Material.Wood,
+		parent = parent,
+	})
 	for i, off in { Vector3.new(0, 9, 0), Vector3.new(1.6, 8, 1), Vector3.new(-1.5, 8.3, -0.8) } do
 		P({
 			name = "Leaves",
@@ -116,28 +139,111 @@ local function tree(parent: Instance, pos: Vector3, scale: number)
 end
 
 local function lamp(parent: Instance, pos: Vector3)
-	P({ name = "LampPost", size = Vector3.new(0.6, 9, 0.6), position = pos + Vector3.new(0, 4.5, 0), color = HULL_DARK, material = Enum.Material.Metal, parent = parent })
-	P({ name = "LampHead", shape = Enum.PartType.Ball, size = Vector3.new(1.6, 1.6, 1.6), position = pos + Vector3.new(0, 9.4, 0), color = Color3.fromRGB(200, 235, 255), material = Enum.Material.Neon, collide = false, light = { color = Color3.fromRGB(180, 220, 255), range = 22, brightness = 1.6 }, parent = parent })
+	P({
+		name = "LampPost",
+		size = Vector3.new(0.6, 9, 0.6),
+		position = pos + Vector3.new(0, 4.5, 0),
+		color = HULL_DARK,
+		material = Enum.Material.Metal,
+		parent = parent,
+	})
+	P({
+		name = "LampHead",
+		shape = Enum.PartType.Ball,
+		size = Vector3.new(1.6, 1.6, 1.6),
+		position = pos + Vector3.new(0, 9.4, 0),
+		color = Color3.fromRGB(200, 235, 255),
+		material = Enum.Material.Neon,
+		collide = false,
+		light = { color = Color3.fromRGB(180, 220, 255), range = 22, brightness = 1.6 },
+		parent = parent,
+	})
 end
 
 local function crate(parent: Instance, pos: Vector3, size: number, color: Color3)
-	local c = P({ name = "Crate", size = Vector3.new(size, size, size), cframe = CFrame.new(pos + Vector3.new(0, size / 2, 0)) * CFrame.Angles(0, math.rad(math.random(-20, 20)), 0), color = color, material = Enum.Material.DiamondPlate, parent = parent })
-	P({ name = "CrateBand", size = Vector3.new(size + 0.1, 0.3, size + 0.1), cframe = c.CFrame, color = Color3.fromRGB(255, 200, 60), material = Enum.Material.Neon, collide = false, parent = parent })
+	local c = P({
+		name = "Crate",
+		size = Vector3.new(size, size, size),
+		cframe = CFrame.new(pos + Vector3.new(0, size / 2, 0)) * CFrame.Angles(0, math.rad(math.random(-20, 20)), 0),
+		color = color,
+		material = Enum.Material.DiamondPlate,
+		parent = parent,
+	})
+	P({
+		name = "CrateBand",
+		size = Vector3.new(size + 0.1, 0.3, size + 0.1),
+		cframe = c.CFrame,
+		color = Color3.fromRGB(255, 200, 60),
+		material = Enum.Material.Neon,
+		collide = false,
+		parent = parent,
+	})
 end
 
 local function console(parent: Instance, cf: CFrame, color: Color3)
-	P({ name = "ConsoleDesk", size = Vector3.new(6, 3, 2.5), cframe = cf * CFrame.new(0, 1.5, 0), color = HULL_DARK, material = Enum.Material.Metal, parent = parent })
-	local screen = P({ name = "ConsoleScreen", size = Vector3.new(5, 2.6, 0.2), cframe = cf * CFrame.new(0, 4.4, 0.6) * CFrame.Angles(math.rad(-15), 0, 0), color = color, material = Enum.Material.Neon, transparency = 0.15, collide = false, parent = parent })
+	P({
+		name = "ConsoleDesk",
+		size = Vector3.new(6, 3, 2.5),
+		cframe = cf * CFrame.new(0, 1.5, 0),
+		color = HULL_DARK,
+		material = Enum.Material.Metal,
+		parent = parent,
+	})
+	local screen = P({
+		name = "ConsoleScreen",
+		size = Vector3.new(5, 2.6, 0.2),
+		cframe = cf * CFrame.new(0, 4.4, 0.6) * CFrame.Angles(math.rad(-15), 0, 0),
+		color = color,
+		material = Enum.Material.Neon,
+		transparency = 0.15,
+		collide = false,
+		parent = parent,
+	})
 	tag(screen, "Blinker", { Period = 2 + math.random() * 2, MinT = 0.05, MaxT = 0.35 })
 end
 
 local function shuttle(parent: Instance, color: Color3): Model
 	local m = Instance.new("Model")
 	m.Name = "Traffic"
-	local body = P({ name = "Body", size = Vector3.new(4, 2.5, 12), position = Vector3.zero, color = Color3.fromRGB(225, 228, 235), material = Enum.Material.Metal, collide = false, parent = m })
-	P({ name = "Wing", size = Vector3.new(14, 0.5, 4), position = Vector3.new(0, -0.4, 1.5), color = HULL_DARK, material = Enum.Material.Metal, collide = false, parent = m })
-	P({ name = "Engine", shape = Enum.PartType.Ball, size = Vector3.new(2.2, 2.2, 2.2), position = Vector3.new(0, 0, 6.2), color = color, material = Enum.Material.Neon, collide = false, light = { color = color, range = 18, brightness = 2 }, parent = m })
-	P({ name = "Cockpit", size = Vector3.new(2.6, 1.2, 3), position = Vector3.new(0, 1.2, -3.5), color = Color3.fromRGB(90, 160, 230), material = Enum.Material.Glass, transparency = 0.3, collide = false, parent = m })
+	local body = P({
+		name = "Body",
+		size = Vector3.new(4, 2.5, 12),
+		position = Vector3.zero,
+		color = Color3.fromRGB(225, 228, 235),
+		material = Enum.Material.Metal,
+		collide = false,
+		parent = m,
+	})
+	P({
+		name = "Wing",
+		size = Vector3.new(14, 0.5, 4),
+		position = Vector3.new(0, -0.4, 1.5),
+		color = HULL_DARK,
+		material = Enum.Material.Metal,
+		collide = false,
+		parent = m,
+	})
+	P({
+		name = "Engine",
+		shape = Enum.PartType.Ball,
+		size = Vector3.new(2.2, 2.2, 2.2),
+		position = Vector3.new(0, 0, 6.2),
+		color = color,
+		material = Enum.Material.Neon,
+		collide = false,
+		light = { color = color, range = 18, brightness = 2 },
+		parent = m,
+	})
+	P({
+		name = "Cockpit",
+		size = Vector3.new(2.6, 1.2, 3),
+		position = Vector3.new(0, 1.2, -3.5),
+		color = Color3.fromRGB(90, 160, 230),
+		material = Enum.Material.Glass,
+		transparency = 0.3,
+		collide = false,
+		parent = m,
+	})
 	m.PrimaryPart = body
 	m.Parent = parent
 	return m
@@ -150,20 +256,71 @@ local function decorateSkydeck(hub: Model, y: number)
 
 	-- Floor pattern: darker inlaid panels so the deck isn't a white sheet
 	for x = -105, 105, 30 do
-		P({ name = "FloorPanel", size = Vector3.new(26, 0.08, 30), position = Vector3.new(x, y + 1.04, 18), color = Color3.fromRGB(70, 78, 98), material = Enum.Material.Metal, collide = false, parent = deck })
-		P({ name = "FloorPanel", size = Vector3.new(26, 0.08, 30), position = Vector3.new(x, y + 1.04, -18), color = Color3.fromRGB(70, 78, 98), material = Enum.Material.Metal, collide = false, parent = deck })
+		P({
+			name = "FloorPanel",
+			size = Vector3.new(26, 0.08, 30),
+			position = Vector3.new(x, y + 1.04, 18),
+			color = Color3.fromRGB(70, 78, 98),
+			material = Enum.Material.Metal,
+			collide = false,
+			parent = deck,
+		})
+		P({
+			name = "FloorPanel",
+			size = Vector3.new(26, 0.08, 30),
+			position = Vector3.new(x, y + 1.04, -18),
+			color = Color3.fromRGB(70, 78, 98),
+			material = Enum.Material.Metal,
+			collide = false,
+			parent = deck,
+		})
 	end
 
 	-- The Starfall monument: a floating crystal over a ring
 	local base = Vector3.new(0, y + 1, 8)
-	P({ name = "MonumentBase", shape = Enum.PartType.Cylinder, size = Vector3.new(1.2, 14, 14), cframe = CFrame.new(base + Vector3.new(0, 0.6, 0)) * CFrame.Angles(0, 0, math.rad(90)), color = HULL_DARK, material = Enum.Material.Metal, parent = deck })
-	local ring = P({ name = "MonumentRing", shape = Enum.PartType.Cylinder, size = Vector3.new(0.4, 15, 15), cframe = CFrame.new(base + Vector3.new(0, 1.3, 0)) * CFrame.Angles(0, 0, math.rad(90)), color = TRIM, material = Enum.Material.Neon, transparency = 0.2, collide = false, parent = deck })
+	P({
+		name = "MonumentBase",
+		shape = Enum.PartType.Cylinder,
+		size = Vector3.new(1.2, 14, 14),
+		cframe = CFrame.new(base + Vector3.new(0, 0.6, 0)) * CFrame.Angles(0, 0, math.rad(90)),
+		color = HULL_DARK,
+		material = Enum.Material.Metal,
+		parent = deck,
+	})
+	local ring = P({
+		name = "MonumentRing",
+		shape = Enum.PartType.Cylinder,
+		size = Vector3.new(0.4, 15, 15),
+		cframe = CFrame.new(base + Vector3.new(0, 1.3, 0)) * CFrame.Angles(0, 0, math.rad(90)),
+		color = TRIM,
+		material = Enum.Material.Neon,
+		transparency = 0.2,
+		collide = false,
+		parent = deck,
+	})
 	tag(ring, "Blinker", { Period = 3, MinT = 0, MaxT = 0.5 })
-	local crystal = P({ name = "StarfallShard", size = Vector3.new(3, 7, 3), cframe = CFrame.new(base + Vector3.new(0, 7, 0)) * CFrame.Angles(0, 0, math.rad(12)), color = Color3.fromRGB(255, 220, 140), material = Enum.Material.Neon, collide = false, light = { color = Color3.fromRGB(255, 210, 130), range = 40, brightness = 3 }, parent = deck })
+	local crystal = P({
+		name = "StarfallShard",
+		size = Vector3.new(3, 7, 3),
+		cframe = CFrame.new(base + Vector3.new(0, 7, 0)) * CFrame.Angles(0, 0, math.rad(12)),
+		color = Color3.fromRGB(255, 220, 140),
+		material = Enum.Material.Neon,
+		collide = false,
+		light = { color = Color3.fromRGB(255, 210, 130), range = 40, brightness = 3 },
+		parent = deck,
+	})
 	tag(crystal, "Spinner", { Speed = 0.6, Bob = 0.8 })
 	for i = 1, 4 do
 		local a = i / 4 * math.pi * 2
-		local shard = P({ name = "OrbitShard", size = Vector3.new(0.8, 2, 0.8), position = base + Vector3.new(math.cos(a) * 5, 6, math.sin(a) * 5), color = Color3.fromRGB(255, 200, 100), material = Enum.Material.Neon, collide = false, parent = deck })
+		local shard = P({
+			name = "OrbitShard",
+			size = Vector3.new(0.8, 2, 0.8),
+			position = base + Vector3.new(math.cos(a) * 5, 6, math.sin(a) * 5),
+			color = Color3.fromRGB(255, 200, 100),
+			material = Enum.Material.Neon,
+			collide = false,
+			parent = deck,
+		})
 		tag(shard, "Spinner", { Speed = 1.5, Bob = 0.5 })
 	end
 
@@ -180,18 +337,65 @@ local function decorateSkydeck(hub: Model, y: number)
 	end
 
 	-- Class banners hanging between the shield pylons
-	local bannerColors = { Color3.fromRGB(230, 150, 60), Color3.fromRGB(150, 110, 255), Color3.fromRGB(70, 200, 255), Color3.fromRGB(90, 230, 130), Color3.fromRGB(255, 220, 70) }
+	local bannerColors = {
+		Color3.fromRGB(230, 150, 60),
+		Color3.fromRGB(150, 110, 255),
+		Color3.fromRGB(70, 200, 255),
+		Color3.fromRGB(90, 230, 130),
+		Color3.fromRGB(255, 220, 70),
+	}
 	for i, color in bannerColors do
 		local x = -100 + (i - 1) * 50
-		P({ name = "BannerPole", size = Vector3.new(0.4, 16, 0.4), position = Vector3.new(x, y + 9, -38.5), color = HULL_DARK, material = Enum.Material.Metal, parent = deck })
-		local flag = P({ name = "Banner", size = Vector3.new(6, 9, 0.2), position = Vector3.new(x + 3.2, y + 12, -38.5), color = color, material = Enum.Material.Fabric, collide = false, parent = deck })
-		P({ name = "BannerTrim", size = Vector3.new(6, 0.4, 0.25), position = flag.Position - Vector3.new(0, 4.4, 0), color = GOLD, material = Enum.Material.Neon, collide = false, parent = deck })
+		P({
+			name = "BannerPole",
+			size = Vector3.new(0.4, 16, 0.4),
+			position = Vector3.new(x, y + 9, -38.5),
+			color = HULL_DARK,
+			material = Enum.Material.Metal,
+			parent = deck,
+		})
+		local flag = P({
+			name = "Banner",
+			size = Vector3.new(6, 9, 0.2),
+			position = Vector3.new(x + 3.2, y + 12, -38.5),
+			color = color,
+			material = Enum.Material.Fabric,
+			collide = false,
+			parent = deck,
+		})
+		P({
+			name = "BannerTrim",
+			size = Vector3.new(6, 0.4, 0.25),
+			position = flag.Position - Vector3.new(0, 4.4, 0),
+			color = GOLD,
+			material = Enum.Material.Neon,
+			collide = false,
+			parent = deck,
+		})
 	end
 
 	-- Crew hanging out on the deck
-	HubDecor.Npc(deck, "Ensign Mara", "Skydeck Watch", CFrame.lookAt(Vector3.new(-70, y + 1, 20), Vector3.new(-80, y + 1, 0)), TRIM)
-	HubDecor.Npc(deck, "Tomas", "Off-duty pilot", CFrame.lookAt(Vector3.new(30, y + 1, -22), Vector3.new(38, y + 1, -22)), Color3.fromRGB(200, 90, 70))
-	HubDecor.Npc(deck, "Iko", "Off-duty pilot", CFrame.lookAt(Vector3.new(38, y + 1, -22), Vector3.new(30, y + 1, -22)), Color3.fromRGB(90, 120, 200))
+	HubDecor.Npc(
+		deck,
+		"Ensign Mara",
+		"Skydeck Watch",
+		CFrame.lookAt(Vector3.new(-70, y + 1, 20), Vector3.new(-80, y + 1, 0)),
+		TRIM
+	)
+	HubDecor.Npc(
+		deck,
+		"Tomas",
+		"Off-duty pilot",
+		CFrame.lookAt(Vector3.new(30, y + 1, -22), Vector3.new(38, y + 1, -22)),
+		Color3.fromRGB(200, 90, 70)
+	)
+	HubDecor.Npc(
+		deck,
+		"Iko",
+		"Off-duty pilot",
+		CFrame.lookAt(Vector3.new(38, y + 1, -22), Vector3.new(30, y + 1, -22)),
+		Color3.fromRGB(90, 120, 200)
+	)
 end
 
 local function decorateCommandDeck(hub: Model, y: number)
@@ -202,43 +406,159 @@ local function decorateCommandDeck(hub: Model, y: number)
 		console(cmd, CFrame.new(x, y + 0.4, 27) * CFrame.Angles(0, math.pi, 0), Color3.fromRGB(255, 190, 90))
 	end
 	-- Holographic Earth over the Mission Table
-	local holo = P({ name = "HoloEarth", shape = Enum.PartType.Ball, size = Vector3.new(6, 6, 6), position = Vector3.new(-185, y + 9, 0), color = Color3.fromRGB(80, 170, 255), material = Enum.Material.Neon, transparency = 0.45, collide = false, parent = cmd })
+	local holo = P({
+		name = "HoloEarth",
+		shape = Enum.PartType.Ball,
+		size = Vector3.new(6, 6, 6),
+		position = Vector3.new(-185, y + 9, 0),
+		color = Color3.fromRGB(80, 170, 255),
+		material = Enum.Material.Neon,
+		transparency = 0.45,
+		collide = false,
+		parent = cmd,
+	})
 	tag(holo, "Spinner", { Speed = 0.4, Bob = 0.4 })
-	local orbit = P({ name = "HoloOrbit", shape = Enum.PartType.Cylinder, size = Vector3.new(0.15, 11, 11), cframe = CFrame.new(-185, y + 9, 0) * CFrame.Angles(math.rad(20), 0, math.rad(90)), color = TRIM, material = Enum.Material.Neon, transparency = 0.4, collide = false, parent = cmd })
+	local orbit = P({
+		name = "HoloOrbit",
+		shape = Enum.PartType.Cylinder,
+		size = Vector3.new(0.15, 11, 11),
+		cframe = CFrame.new(-185, y + 9, 0) * CFrame.Angles(math.rad(20), 0, math.rad(90)),
+		color = TRIM,
+		material = Enum.Material.Neon,
+		transparency = 0.4,
+		collide = false,
+		parent = cmd,
+	})
 	tag(orbit, "Spinner", { Speed = -0.8 })
 	-- Crew
-	HubDecor.Npc(cmd, "Commander Hale", "Fleet Command", CFrame.lookAt(Vector3.new(-176, y + 0.4, -9), Vector3.new(-185, y + 0.4, 0)), Color3.fromRGB(40, 50, 80))
-	HubDecor.Npc(cmd, "Operator Venn", "SOL Liaison", CFrame.lookAt(Vector3.new(-220, y + 0.4, -6), Vector3.new(-232, y + 0.4, 0)), Color3.fromRGB(255, 200, 90))
-	HubDecor.Npc(cmd, "Lt. Osei", "Comms", CFrame.lookAt(Vector3.new(-210, y + 0.4, -27), Vector3.new(-210, y + 0.4, -40)), TRIM)
+	HubDecor.Npc(
+		cmd,
+		"Commander Hale",
+		"Fleet Command",
+		CFrame.lookAt(Vector3.new(-176, y + 0.4, -9), Vector3.new(-185, y + 0.4, 0)),
+		Color3.fromRGB(40, 50, 80)
+	)
+	HubDecor.Npc(
+		cmd,
+		"Operator Venn",
+		"SOL Liaison",
+		CFrame.lookAt(Vector3.new(-220, y + 0.4, -6), Vector3.new(-232, y + 0.4, 0)),
+		Color3.fromRGB(255, 200, 90)
+	)
+	HubDecor.Npc(
+		cmd,
+		"Lt. Osei",
+		"Comms",
+		CFrame.lookAt(Vector3.new(-210, y + 0.4, -27), Vector3.new(-210, y + 0.4, -40)),
+		TRIM
+	)
 end
 
 local function decorateHangar(hub: Model, y: number)
 	local hangar = Build.model("HangarDecor", hub)
-	for i, pos in { Vector3.new(150, y, -28), Vector3.new(156, y, -28), Vector3.new(150, y, -22), Vector3.new(153, y + 4, -26) } do
+	for i, pos in
+		{ Vector3.new(150, y, -28), Vector3.new(156, y, -28), Vector3.new(150, y, -22), Vector3.new(153, y + 4, -26) }
+	do
 		crate(hangar, pos, if i == 4 then 3.5 else 5, Color3.fromRGB(70, 80, 70))
 	end
 	for _, z in { -30, -22 } do
-		P({ name = "FuelTank", shape = Enum.PartType.Cylinder, size = Vector3.new(9, 6, 6), cframe = CFrame.new(228, y + 4.5, z) * CFrame.Angles(0, 0, math.rad(90)), color = Color3.fromRGB(200, 90, 60), material = Enum.Material.Metal, parent = hangar })
+		P({
+			name = "FuelTank",
+			shape = Enum.PartType.Cylinder,
+			size = Vector3.new(9, 6, 6),
+			cframe = CFrame.new(228, y + 4.5, z) * CFrame.Angles(0, 0, math.rad(90)),
+			color = Color3.fromRGB(200, 90, 60),
+			material = Enum.Material.Metal,
+			parent = hangar,
+		})
 	end
-	P({ name = "Crane", size = Vector3.new(1, 26, 1), position = Vector3.new(210, y + 13, 20), color = Color3.fromRGB(230, 190, 50), material = Enum.Material.Metal, parent = hangar })
-	P({ name = "CraneArm", size = Vector3.new(30, 1, 1), position = Vector3.new(196, y + 26, 20), color = Color3.fromRGB(230, 190, 50), material = Enum.Material.Metal, parent = hangar })
-	HubDecor.Npc(hangar, "Kade", "Chief Mechanic", CFrame.lookAt(Vector3.new(165, y + 0.4, -12), Vector3.new(185, y + 0.4, 0)), Color3.fromRGB(230, 150, 60))
-	HubDecor.Npc(hangar, "Pilot Reyes", "Shuttle Pilot", CFrame.lookAt(Vector3.new(200, y + 0.4, 12), Vector3.new(185, y + 0.4, 0)), Color3.fromRGB(90, 120, 200))
+	P({
+		name = "Crane",
+		size = Vector3.new(1, 26, 1),
+		position = Vector3.new(210, y + 13, 20),
+		color = Color3.fromRGB(230, 190, 50),
+		material = Enum.Material.Metal,
+		parent = hangar,
+	})
+	P({
+		name = "CraneArm",
+		size = Vector3.new(30, 1, 1),
+		position = Vector3.new(196, y + 26, 20),
+		color = Color3.fromRGB(230, 190, 50),
+		material = Enum.Material.Metal,
+		parent = hangar,
+	})
+	HubDecor.Npc(
+		hangar,
+		"Kade",
+		"Chief Mechanic",
+		CFrame.lookAt(Vector3.new(165, y + 0.4, -12), Vector3.new(185, y + 0.4, 0)),
+		Color3.fromRGB(230, 150, 60)
+	)
+	HubDecor.Npc(
+		hangar,
+		"Pilot Reyes",
+		"Shuttle Pilot",
+		CFrame.lookAt(Vector3.new(200, y + 0.4, 12), Vector3.new(185, y + 0.4, 0)),
+		Color3.fromRGB(90, 120, 200)
+	)
 end
 
 local function decorateHull(hub: Model, y: number)
 	local hull = Build.model("HullDecor", hub)
 	-- Comms tower over the Command Deck with a blinking beacon and a dish
-	P({ name = "Mast", size = Vector3.new(1.2, 40, 1.2), position = Vector3.new(-200, y + 50, 0), color = HULL, material = Enum.Material.Metal, parent = hull })
-	local beacon = P({ name = "MastBeacon", shape = Enum.PartType.Ball, size = Vector3.new(2.4, 2.4, 2.4), position = Vector3.new(-200, y + 71, 0), color = Color3.fromRGB(255, 50, 50), material = Enum.Material.Neon, collide = false, light = { color = Color3.fromRGB(255, 50, 50), range = 30, brightness = 3 }, parent = hull })
+	P({
+		name = "Mast",
+		size = Vector3.new(1.2, 40, 1.2),
+		position = Vector3.new(-200, y + 50, 0),
+		color = HULL,
+		material = Enum.Material.Metal,
+		parent = hull,
+	})
+	local beacon = P({
+		name = "MastBeacon",
+		shape = Enum.PartType.Ball,
+		size = Vector3.new(2.4, 2.4, 2.4),
+		position = Vector3.new(-200, y + 71, 0),
+		color = Color3.fromRGB(255, 50, 50),
+		material = Enum.Material.Neon,
+		collide = false,
+		light = { color = Color3.fromRGB(255, 50, 50), range = 30, brightness = 3 },
+		parent = hull,
+	})
 	tag(beacon, "Blinker", { Period = 1.2, MinT = 0, MaxT = 0.9 })
-	local dish = P({ name = "Dish", shape = Enum.PartType.Cylinder, size = Vector3.new(1, 16, 16), cframe = CFrame.new(-165, y + 40, 0) * CFrame.Angles(0, 0, math.rad(60)), color = HULL, material = Enum.Material.Metal, parent = hull })
+	local dish = P({
+		name = "Dish",
+		shape = Enum.PartType.Cylinder,
+		size = Vector3.new(1, 16, 16),
+		cframe = CFrame.new(-165, y + 40, 0) * CFrame.Angles(0, 0, math.rad(60)),
+		color = HULL,
+		material = Enum.Material.Metal,
+		parent = hull,
+	})
 	tag(dish, "Spinner", { Speed = 0.15, Axis = "World" })
 	-- Panel lines and running lights along the hull sides
 	for x = -240, 240, 40 do
 		for _, z in { -40.3, 40.3 } do
-			P({ name = "PanelLine", size = Vector3.new(0.4, 36, 0.3), position = Vector3.new(x, y - 20, z), color = HULL_DARK, material = Enum.Material.Metal, collide = false, parent = hull })
-			local light = P({ name = "RunningLight", shape = Enum.PartType.Ball, size = Vector3.new(1.2, 1.2, 1.2), position = Vector3.new(x + 20, y - 4, z), color = if z < 0 then Color3.fromRGB(255, 60, 60) else Color3.fromRGB(60, 255, 120), material = Enum.Material.Neon, collide = false, parent = hull })
+			P({
+				name = "PanelLine",
+				size = Vector3.new(0.4, 36, 0.3),
+				position = Vector3.new(x, y - 20, z),
+				color = HULL_DARK,
+				material = Enum.Material.Metal,
+				collide = false,
+				parent = hull,
+			})
+			local light = P({
+				name = "RunningLight",
+				shape = Enum.PartType.Ball,
+				size = Vector3.new(1.2, 1.2, 1.2),
+				position = Vector3.new(x + 20, y - 4, z),
+				color = if z < 0 then Color3.fromRGB(255, 60, 60) else Color3.fromRGB(60, 255, 120),
+				material = Enum.Material.Neon,
+				collide = false,
+				parent = hull,
+			})
 			tag(light, "Blinker", { Period = 2, MinT = 0, MaxT = 0.8, Offset = (x + 240) / 160 })
 		end
 	end
@@ -279,13 +599,15 @@ function HubDecor.ApplySky()
 end
 
 function HubDecor.Decorate(hub: Model, deckY: number)
-	for name, fn in {
-		Skydeck = decorateSkydeck,
-		CommandDeck = decorateCommandDeck,
-		Hangar = decorateHangar,
-		Hull = decorateHull,
-		Traffic = traffic,
-	} do
+	for name, fn in
+		{
+			Skydeck = decorateSkydeck,
+			CommandDeck = decorateCommandDeck,
+			Hangar = decorateHangar,
+			Hull = decorateHull,
+			Traffic = traffic,
+		}
+	do
 		local ok, err = pcall(fn, hub, deckY)
 		if not ok then
 			warn("[HubDecor] " .. name .. " failed:", err)
