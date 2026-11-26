@@ -21,7 +21,8 @@ local GOLD = Color3.fromRGB(210, 170, 80)
 local IDLE_ANIMATION = "rbxassetid://507766388"
 
 local function tag(inst: Instance, name: string, attrs: { [string]: any }?)
-	for k, v in attrs or {} do
+	local list: { [string]: any } = attrs or {}
+	for k, v in list do
 		inst:SetAttribute(k, v)
 	end
 	CollectionService:AddTag(inst, name)
