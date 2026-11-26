@@ -13,6 +13,7 @@ local Story = require(Shared.Config.Story)
 local Classes = require(Shared.Config.Classes)
 
 local Build = require(script.Parent.Build)
+local HubDecor = require(script.Parent.HubDecor)
 local P = Build.part
 
 local HubBuilder = {}
@@ -839,6 +840,13 @@ local function buildClassHalls(hub: Model)
 		-- Centerpiece + prompt
 		local pedestal = centerpiece(m, hall.centerpiece, base + Vector3.new(slot.side * 2, 0, 0), class.color)
 		addPrompt(pedestal, "Order Info", hall.name, "ClassHall", classId)
+		HubDecor.Npc(
+			m,
+			class.name .. " Quartermaster",
+			hall.name,
+			CFrame.lookAt(base + Vector3.new(slot.side * 8, 0, 6), base + Vector3.new(slot.side * 2, 0, 0)),
+			class.color
+		)
 	end
 end
 
@@ -849,10 +857,22 @@ local function buildSpace(hub: Model, flags: { [string]: boolean })
 	P({
 		name = "Earth",
 		shape = Enum.PartType.Ball,
-		size = Vector3.new(2048, 2048, 2048),
+		size = Vector3.new(1800, 1800, 1800),
 		position = Vector3.new(0, -1500, 0),
 		color = Color3.fromRGB(35, 80, 160),
 		material = Enum.Material.SmoothPlastic,
+		collide = false,
+		parent = space,
+	})
+	-- Atmosphere glow around the Earth
+	P({
+		name = "Atmosphere",
+		shape = Enum.PartType.Ball,
+		size = Vector3.new(2000, 2000, 2000),
+		position = Vector3.new(0, -1500, 0),
+		color = Color3.fromRGB(120, 190, 255),
+		material = Enum.Material.ForceField,
+		transparency = 0.2,
 		collide = false,
 		parent = space,
 	})
@@ -861,7 +881,7 @@ local function buildSpace(hub: Model, flags: { [string]: boolean })
 		local a = crng:NextNumber(0, math.pi * 2)
 		local r = crng:NextNumber(0, 350)
 		local x, z = math.cos(a) * r, math.sin(a) * r
-		local y = -1500 + math.sqrt(1024 ^ 2 - x * x - z * z) + 1
+		local y = -1500 + math.sqrt(900 ^ 2 - x * x - z * z) + 1
 		P({
 			name = "Crack",
 			size = Vector3.new(crng:NextNumber(120, 380), 3, crng:NextNumber(4, 10)),
@@ -876,7 +896,7 @@ local function buildSpace(hub: Model, flags: { [string]: boolean })
 		local a = crng:NextNumber(0, math.pi * 2)
 		local r = crng:NextNumber(0, 700)
 		local x, z = math.cos(a) * r, math.sin(a) * r
-		local y = -1500 + math.sqrt(1024 ^ 2 - x * x - z * z) + 6
+		local y = -1500 + math.sqrt(900 ^ 2 - x * x - z * z) + 6
 		P({
 			name = "Cloud",
 			size = Vector3.new(crng:NextNumber(80, 220), 2, crng:NextNumber(40, 120)),
@@ -999,6 +1019,7 @@ function HubBuilder.Build(): Model
 	buildTrusses(hub)
 	buildClassHalls(hub)
 	buildSpace(hub, flags)
+	HubDecor.Decorate(hub, DECK_Y)
 	hub.Parent = workspace
 	HubBuilder.ApplyLighting()
 	return hub
