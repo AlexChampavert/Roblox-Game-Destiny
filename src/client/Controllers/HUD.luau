@@ -108,7 +108,7 @@ local function build()
 
 	-- Top-left: level, XP, power, shards
 	local profile = UI.new("Frame", {
-		Position = UDim2.fromOffset(14, 66) -- below the Roblox top bar (menu + chat buttons),
+		Position = UDim2.fromOffset(14, 66), -- below the Roblox top bar (menu + chat buttons)
 		Size = UDim2.fromOffset(250, 64),
 		BackgroundColor3 = C.bg,
 		BackgroundTransparency = 0.25,
