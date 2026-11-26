@@ -95,10 +95,12 @@ function CombatService.GetWeaponId(player: Player, slot: string): string
 			return gear.weaponId
 		end
 		local class = profile.classId and Classes.Defs[profile.classId]
-		if class then
-			return class.startingWeapons[slot]
+		local fromClass = class and class.startingWeapons[slot]
+		if fromClass and Weapons[fromClass] then
+			return fromClass
 		end
 	end
+	-- Always return a real weapon, whatever the slot (a nil here broke loadouts and missions)
 	return if slot == "primary" then "AutoRifle" elseif slot == "heavy" then "RocketLauncher" else "HandCannon"
 end
 

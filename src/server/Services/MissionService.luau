@@ -455,9 +455,15 @@ function MissionService.Start(missionId: string)
 	setSpawn(layout.start)
 
 	for _, p in Players:GetPlayers() do
-		Telemetry.Step(p, Telemetry.Funnel.FirstLaunch)
-		p:SetAttribute("SuperCharge", 0)
-		CombatService.RefreshLoadout(p, true) -- fresh special/heavy reserves
+		-- One player's setup failing must never stop the mission for everyone
+		local ok, err = pcall(function()
+			Telemetry.Step(p, Telemetry.Funnel.FirstLaunch)
+			p:SetAttribute("SuperCharge", 0)
+			CombatService.RefreshLoadout(p, true) -- fresh special/heavy reserves
+		end)
+		if not ok then
+			warn("[MissionService] setup failed for", p.Name, err)
+		end
 		placeAtCheckpoint(p)
 	end
 	notifyAll(def.intro, "story")
