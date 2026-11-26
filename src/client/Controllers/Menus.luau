@@ -197,6 +197,7 @@ function Pages.Missions(state)
 				TextColor3 = Color3.new(0, 0, 0),
 				Parent = c,
 			}, function()
+				print("[Starfall] LAUNCH clicked:", m.id)
 				Net.event("LaunchMission"):FireServer(m.id)
 				Menus.Close()
 			end)

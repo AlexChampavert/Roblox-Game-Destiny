@@ -41,19 +41,30 @@ local LoadoutService = require(Services.LoadoutService)
 local MatchmakingService = require(Services.MatchmakingService)
 local LobbyService = require(Services.LobbyService)
 
-Security.Start()
-MovementService.Start()
-DataService.Start()
-CombatService.Start()
-ClassService.Start()
-AbilityService.Start()
-EnemyService.Start()
-StoryService.Start()
-MissionService.Init()
-BountyService.Start()
-LoadoutService.Start()
-MatchmakingService.Start()
-LobbyService.Start()
+-- Start every service in its own pcall: one crashing service must not stop the others
+-- (e.g. the Mission Table would silently do nothing if LobbyService never started).
+local function start(name: string, fn: () -> ())
+	local ok, err = pcall(fn)
+	if ok then
+		print(("[Starfall] %s started"):format(name))
+	else
+		warn(("[Starfall] %s FAILED to start: %s"):format(name, tostring(err)))
+	end
+end
+
+start("Security", Security.Start)
+start("MovementService", MovementService.Start)
+start("DataService", DataService.Start)
+start("CombatService", CombatService.Start)
+start("ClassService", ClassService.Start)
+start("AbilityService", AbilityService.Start)
+start("EnemyService", EnemyService.Start)
+start("StoryService", StoryService.Start)
+start("MissionService", MissionService.Init)
+start("BountyService", BountyService.Start)
+start("LoadoutService", LoadoutService.Start)
+start("MatchmakingService", MatchmakingService.Start)
+start("LobbyService", LobbyService.Start)
 
 -- Analytics hooks
 Players.PlayerAdded:Connect(function(player)
